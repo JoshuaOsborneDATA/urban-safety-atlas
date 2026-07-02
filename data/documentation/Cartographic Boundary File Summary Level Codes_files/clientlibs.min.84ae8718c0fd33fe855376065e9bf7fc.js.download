@@ -1,0 +1,1 @@
+function arrangeFixedGridLayout(b){var a=$("#"+b);if(a){b=a.find(".uscb-fixed-grid-R");var c=a.find(".data-uscb-fixed-grid-target-mobile");a=a.find(".data-uscb-fixed-grid-target-desktop");Modernizr.mq("only screen and (max-width : 768px)")?b.insertAfter(c):b.insertAfter(a)}};

@@ -1,0 +1,1063 @@
+/*******************************************************************************
+ * Copyright 2020 Adobe
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
+(function() {
+    "use strict";
+
+    window.CQ = window.CQ || {};
+    window.CQ.CoreComponents = window.CQ.CoreComponents || {};
+    window.CQ.CoreComponents.container = window.CQ.CoreComponents.container || {};
+    window.CQ.CoreComponents.container.utils = {};
+
+    /**
+     * Utilities for Container Components (accordion, tabs)
+     *
+     * @namespace
+     * @alias CQ.CoreComponents.container.utils
+     * @type {{}}
+     */
+    window.CQ.CoreComponents.container.utils = {
+
+        /**
+         * Removes the hash from the URL.
+         */
+        removeUrlHash: function() {
+            history.replaceState(undefined, undefined, " ");
+        },
+
+        /**
+         * Updates the URL hash with the panel ID without scrolling to it.
+         *
+         * @param {Object} component The container component (e.g. Accordion, Carousel, Tabs).
+         * @param {String} itemType The type of the item as defined in the component.
+         * @param {Number} index The index of the container item
+         */
+        updateUrlHash: function(component, itemType, index) {
+            if (component && component._elements && component._elements[itemType] &&
+                component._elements[itemType][index] && component._elements[itemType][index].id) {
+                var ID = component._elements[itemType][index].id;
+                history.replaceState(undefined, undefined, "#" + ID);
+            }
+        },
+
+        /**
+         * Returns the index of the component item (accordion, carousel, tabs) that:
+         * - either corresponds to the deep link in the URL fragment
+         * - or contains the element that corresponds to the deep link in the URL fragment
+         *
+         * @param {Object} component The container component (Accordion, Carousel or Tabs).
+         * @param {String} itemType The type of the item as defined in the component.
+         * @param {String} itemContentType The type of the item content as defined in the component.
+         * @returns {Number} the index within the items array if the item exists, -1 otherwise.
+         */
+        getDeepLinkItemIdx: function(component, itemType, itemContentType) {
+            if (window.location.hash) {
+                var deepLinkId = window.location.hash.substring(1);
+                if (deepLinkId && document.getElementById(deepLinkId) &&
+                    component && component._config && component._config.element &&
+                    component._elements[itemType] &&
+                    component._config.element.querySelector("[id='" + deepLinkId + "']")) {
+                    for (var i = 0; i < component._elements[itemType].length; i++) {
+                        var item = component._elements[itemType][i];
+                        var itemContentContainsId = false;
+                        if (component._elements[itemContentType]) {
+                            var itemContent = component._elements[itemContentType][i];
+                            itemContentContainsId = itemContent && itemContent.querySelector("[id='" + deepLinkId + "']");
+                        }
+                        if (item.id === deepLinkId || itemContentContainsId) {
+                            return i;
+                        }
+                    }
+                }
+                return -1;
+            }
+            return -1;
+        },
+
+        /**
+         * Returns the item of the container component (accordion, carousel, tabs) that:
+         * - either corresponds to the deep link in the URL fragment
+         * - or contains the element that corresponds to the deep link in the URL fragment
+         *
+         * @param {Object} component The Accordion or Tabs component.
+         * @param {String} itemType The type of the item as defined in the component.
+         * @param {String} itemContentType The type of the item content as defined in the component.
+         * @returns {Object} the item if it exists, undefined otherwise.
+         */
+        getDeepLinkItem: function(component, itemType, itemContentType) {
+            var idx = window.CQ.CoreComponents.container.utils.getDeepLinkItemIdx(component, itemType, itemContentType);
+            if (component && component._elements && component._elements[itemType]) {
+                return component._elements[itemType][idx];
+            }
+        },
+
+        /**
+         * Scrolls the browser on page reload (if URI contains URI fragment) to the item of the container component (accordion, tabs)
+           that corresponds to the deep link in the URI fragment.
+         * This method fixes the issue existent with Chrome and related browsers, which are not scrolling on page reload (if URI contains URI fragment)
+           to the element that corresponds to the deep link in the URI fragment.
+         * Small setTimeout is needed, otherwise the scrolling will not work on Chrome.
+         */
+        scrollToAnchor: function() {
+            setTimeout(function() {
+                if (window.location.hash) {
+                    var id = decodeURIComponent(window.location.hash.substring(1));
+                    var anchorElement = document.getElementById(id);
+                    if (anchorElement && anchorElement.offsetTop) {
+                        anchorElement.scrollIntoView();
+                    }
+                }
+            }, 100);
+        }
+    };
+}());
+
+var $ = jQuery.noConflict();
+
+$(document).ready(function(){
+    var $searchBox = $("#searchInput");
+    Shadowbox.init({
+            handleOversize: "drag",
+            modal: true
+        });        
+    // set StateGeo 
+    if(google.loader.ClientLocation){
+        var stateMap = {'ak':'alaska','al':'alabama','ar':'arkansas','az':'arizona','ca':'california','co':'colorado','ct':'connecticut','de':'delaware','fl':'florida','ga':'georgia','hi':'hawaii','ia':'iowa','id':'idaho','il':'illinois','in':'indiana','ks':'kansas','ky':'kentucky','la':'louisiana','ma':'massachusetts','md':'maryland','me':'maine','mi':'michigan','mn':'minnesota','mo':'missouri','ms':'mississippi','mt':'montana','nc':'north_carolina','nd':'north_dakota','ne':'nebraska','nh':'new_hampshire','nj':'new_jersey','nm':'new_mexico','nv':'nevada','ny':'new_york','oh':'ohio','ok':'oklahoma','or':'oregon','pa':'pennsylvania','ri':'rhode_island','sc':'south_carolina','sd':'south_dakota','tn':'tennessee','tx':'texas','ut':'utah','va':'virginia','vt':'vermont','wa':'washington','wi':'wisconsin','wv':'west_virginia','wy':'wyoming','dc':'district of columbia'}
+        $('#stateGeo').val(stateMap[google.loader.ClientLocation.address.region]);
+    }else{
+        $('#stateGeo').val("none");
+    }
+    
+    // Focus the cursor on the text box
+    $searchBox.focus();
+
+    // bring cursor to the end of the text
+    cursorToEnd();
+    
+    $searchBox.blur();
+    
+    // Submit the search form when the search button is clicked
+    $("#searchButton").click(function() { $("#searchForm").submit(); })
+    
+    // Disambiguation Dialog
+    $('#disambigSelect').click(function() {
+        $("#disambigDiv").toggle();
+        $('#disambigSelect > div').toggleClass("disambigArrowRight disambigArrowDown");
+        
+        return false;
+    });
+
+    $("#searchTooltip").dialog({ autoOpen:false, width: "auto", minHeight: "170px", resizable: false,
+                                dialogClass: "searchTooltipWidget", 
+                               position: { my: "left top", at: "right-365 top", of: "#searchFormContainer" } }); 
+
+
+    $("#qaAnnotationTooltip").dialog({ autoOpen:false, width: "auto", minHeight: "170px", resizable: false,
+                               dialogClass: "qaAnnotationTooltipWidget", 
+                               position: { my: "left top", at: "right-365 top", of: "#searchFormContainer" } });
+
+    $("#infoPanelAnnotationTooltip").dialog({ autoOpen:false, width: "auto", minHeight: "170px", resizable: false,
+                               dialogClass: "infoPanelAnnotationTooltipWidget", 
+                               position: { my: "left top", at: "right-365 top", of: "#searchFormContainer" } });
+
+
+});
+
+//bring cursor to the end of the text 
+function cursorToEnd(){
+    var $searchBox = $("#searchInput");
+    var val = $searchBox.val();
+    $searchBox.val('');
+    $searchBox.val(val);
+}
+
+// Note: Plan b for video search. Pull image via ajax
+// http://jquery-howto.blogspot.com/2009/02/how-to-get-youtube-video-screenshot.html
+var SearchDataService = (function ($) {
+	var DEFAULT_QUERY = 'united states';
+	var DEFAULT_GEO_CODE = '010XX00US';
+
+	// Root URL of API
+	var dataRoot;
+	var streams;
+
+	/** Maps out the structure of CEDSCI's API. Each object maps to a request for a piece of data, some of which come from the same endpoint.
+		Parameters needed per endpoint are also described.
+		var streams = {
+			entities: {
+				endpoint: 'search',
+				parameters: {
+					q: undefined,
+					services: 'search:featuredresults'
+				}
+			},
+			search: {
+				endpoint: 'search',
+				parameters: {
+					q: undefined,
+					services: 'search:featuredresults'
+				}
+			},
+			featuredresults: {
+				endpoint: 'search',
+				parameters: {
+					q: undefined,
+					services: 'search:featuredresults'
+				}
+			},
+			highlights: {
+				endpoint: 'profile/content/highlights',
+				parameters: {
+					g: undefined
+				}
+			},
+				// Subset of highlights data specifying the related geo
+			selectedProfile: {
+				endpoint: 'profile/content/highlights',
+				parameters: {
+					g: undefined
+				}
+			},
+			profiles: {
+				endpoint: 'search',
+				parameters: {
+					services: 'search:featuredresults'
+				}
+			},
+			typeahead: {
+				endpoint: 'typeahead'
+			}
+		};
+	**/
+
+	var initialized = false;
+	var promises = {};
+	var typeaheadSupportedGeosLevels = {};
+
+	// Intake root URL
+	function init(root, endpoints, rawTypeaheadSupportedGeos) {
+		typeaheadSupportedGeosLevels = convertGeoLevels(rawTypeaheadSupportedGeos);
+		if (!dataRoot) {
+			dataRoot = root;
+		}
+		if (!streams) {
+			streams = translateRawEndpoints(endpoints);
+		}
+
+		initQueries();
+	}
+
+	function convertGeoLevels(raw) {
+		let converted = {};
+		if (raw && raw !== 'null' && raw !== '[]') {
+			let parsed = JSON.parse(raw);
+
+			parsed.forEach(function (geo) {
+				converted[geo.code] = geo.level;
+			});
+		}
+
+		return converted;
+	}
+
+	function findLocation(entities) {
+		const supportedGeoLevels = {
+			'010': 'nation',
+			'040': 'state',
+			'050': 'county',
+			'160': 'city'
+		};
+
+		for (let i = 0; i < entities.length; i++) {
+			if (!entities[i].options) {
+				continue;
+			}
+
+			for (let j = 0; j < entities[i].options.length; j++) {
+				const entry = entities[i].options[j];
+				const locationType = entry?.type;
+				const locationCode = entry?.facets.geography && entry?.facets.geography[0].slice(0, 3);
+				const isSelectedExist = "selected" in entry ? (entry.selected) : null;
+				if (locationType === "geography" && supportedGeoLevels[locationCode] && (isSelectedExist === null || isSelectedExist)) {
+					return entry;
+				}
+			}
+		}
+	}
+
+	// Endpoints comes in as stringified JSON in a format stored by the dialog. 
+	// They need to be translated a bit into an object the brain can understand.
+	function translateRawEndpoints(rawEndpoints) {
+		if (rawEndpoints) {
+			var parsedEndpoints = JSON.parse(rawEndpoints);
+			var endpoints = {};
+
+			parsedEndpoints.forEach(function (parsedEndpoint) {
+				var dataObject = parsedEndpoint.dataObject;
+				delete parsedEndpoint.dataObject;
+				parsedEndpoint.parameters = convertParameters(parsedEndpoint.parameters);
+
+				endpoints[dataObject] = parsedEndpoint;
+			});
+
+			return endpoints;
+		}
+	}
+
+	function convertParameters(parameters) {
+		var formattedEndpoints = {};
+		parameters.forEach(function (parameter) {
+			formattedEndpoints[parameter.name] = parameter.value;
+		});
+
+		return formattedEndpoints;
+	}
+
+	// Initialize query objects 
+	function initQueries() {
+		// Only initialize once. This function may be called several times 
+		// due to the various components that can initialize it independently.
+		if (!initialized && streams) {
+			// Create list of unique endpoints to serve as structure of promises
+			var endpoints = [];
+			Object.keys(streams).forEach(function (stream) {
+				if (endpoints.indexOf(streams[stream].endpoint) === -1) {
+					endpoints.push(streams[stream].endpoint);
+				}
+			});
+
+			// Create an object with a promise and a progress flag to each endpoint
+			endpoints.forEach(function (endpointKey) {
+				promises[endpointKey] = {
+					callStarted: undefined,
+					promise: undefined
+				};
+			});
+
+			// Remove typeahead init since it will use a different system
+			delete promises.typeahead;
+
+			initialized = true;
+		}
+	}
+
+	// Entry point for components. Returns a promise of the requested data.
+	function subscribe(stream, query) {
+		// Use the override if it exists, otherwise pull the query from the q parameter
+		var q = query ? query : isolateQueryParam();
+
+		if (streams && streams[stream]) {
+			// Check to see if the requesting data has already been called
+			// If it has, return that as a resolved promise. If not, make the call.
+			var endpointKey = streams[stream].endpoint;
+			if (!promises[endpointKey][q] ||
+				!promises[endpointKey][q].callStarted) {
+
+				if (endpointKey === 'search') {
+					promises[endpointKey][q] = {
+						callStarted: true,
+						promise: queryService(stream, { q: q })
+					};
+
+					return filterPromise(endpointKey, q, stream);
+				} else {
+					// If the requested data is not from the main search point, further information is needed, usually a recognized geocode
+					// If the search query has not been kicked off already, do it before attaching the subsequent call
+					if (!promises.search[q]) {
+						promises.search[q] = {
+							callStarted: true,
+							promise: queryService('search', { q: q })
+						};
+					}
+
+					promises[endpointKey][q] = {
+						callStarted: true,
+						promise: filterPromise('search', q, 'entities').then(function (entities) {
+							// Determine which geo parameter to use based on endpoint
+							var parameters = {};
+
+							// Only locations support profiles
+							var location = findLocation(entities);
+							parameters.g = location ? location.facets.geography[0] : DEFAULT_GEO_CODE;
+
+							return queryService(stream, parameters);
+						})
+					};
+
+					return filterPromise(endpointKey, q, stream);
+				}
+			} else {
+				return filterPromise(endpointKey, q, stream);
+			}
+		} else {
+			// Return rejected promise to activate chained error handling callbacks
+			return Promise.reject();
+		}
+	}
+
+	// Filter raw response data to only return requested data
+	// Has to account for inconsistent response structures
+	function filterPromise(endpointKey, q, stream) {
+		return promises[endpointKey][q].promise.then(function (response) {
+			if (response && response.response) {
+				if (stream && response.response[stream]) {
+					return response.response[stream];
+				} else {
+					return response.response;
+				}
+			} else if (response) {
+				// Should only match highlights response structure
+				if (stream && response[stream]) {
+					return response[stream];
+				}
+			}
+		});
+	}
+
+	// Parse the query string and return the q value
+	// Doing it manually because IE doesn't support some of the one-line functions things like jQuery and higher forms of JS provide
+	function isolateQueryParam() {
+		var qS = window.location.search;
+		var query = {};
+		if (qS && qS.length > 0) {
+			// Remove leading ?
+			qS = qS.substring(1);
+
+			// Iterate over query string and build into object
+			var splitQS = qS.split('&');
+			splitQS.forEach(function (qSFragment) {
+				var splitQSF = qSFragment.split('=');
+				query[splitQSF[0]] = decodeURIComponent(splitQSF[1]);
+			});
+		}
+
+		// Return search parameter only
+		return query.q ? query.q : DEFAULT_QUERY;
+	}
+
+	// Get data from CEDSCI API
+	function queryService(stream, parameters) {
+		if (streams[stream]) {
+			// Clone parameter template and replace with incoming values
+			var clonedparameters = JSON.parse(JSON.stringify(streams[stream].parameters));
+			Object.keys(parameters).forEach(function (key) {
+				clonedparameters[key] = parameters[key];
+			});
+
+			var url = dataRoot + streams[stream].endpoint;
+			return $.get(url, clonedparameters).then(function (response) {
+				// Filter out various forms of pseudogeographies
+				// This function is probably better suited to be just before final return, but the logic gets more complicated there 
+				// and this works for now.
+				if (response && response.response) {
+					// Delete all keys that contain either pseudogeo delimiter
+					// Inelegant, may cause issues in the future.
+					Object.keys(response.response).filter(checkPseudoGeos).forEach(function (pseudoKey) {
+						delete response.response[pseudoKey];
+					});
+
+					// Delete all returned pseudogeo location entities
+					if (response.response.entities && response.response.entities[0].options) {
+						var locations = response.response.entities.find(entry => entry.options[0].type === "geography")?.options || [];
+						locations.filter(function (location) {
+							const geoValue = location.facets.geography && location.facets.geography[0];
+							return geoValue && checkPseudoGeos(location.facets.geography[0]);
+						}).forEach(function (location) {
+							locations.splice(locations.indexOf(location), 1);
+						});
+
+						// Clean up
+						if (locations.length === 0) {
+							delete response.response.entities[0].options;
+						}
+					}
+				}
+
+				return response;
+			});
+		} else {
+			// Return rejected promise to activate chained error handling callbacks
+			return Promise.reject();
+		}
+	}
+
+	// Check to see if the incoming geocode is a pseudogeo, detectable by . (old syntax) or $ (new syntax) delimiters
+	function checkPseudoGeos(code) {
+		return code.indexOf('.') !== -1 || code.indexOf('$') !== -1;
+	}
+
+	// Handle typeahead separately since its structure is so different
+	function typeahead(query) {
+		// var unsupportedEntities = [ 'tables' ];
+		var unsupportedEntities = [];
+
+		var url = dataRoot + streams.typeahead.endpoint;
+
+		// Cancel existing call if it exists
+		if (promises.typeahead) {
+			promises.typeahead.abort();
+		}
+
+		// Make new call
+		var payload = {
+			request: {
+				text: query
+			}
+		};
+		promises.typeahead = $.ajax({
+			type: 'POST',
+			url: url,
+			data: JSON.stringify(payload),
+			contentType: 'application/json;charset=UTF-8'
+		});
+
+		// Filter tables results by allowed entity types
+		// Also check for pseudogeography markers
+		return promises.typeahead.then(function (response) {
+			if (response && response.response && response.response.options) {
+				return response.response.options.filter(function (suggestion) {
+					// Remove unsupported level
+					const geoValue = suggestion.facets.geography && suggestion.facets.geography[0];
+					if (geoValue && !typeaheadSupportedGeosLevels[(suggestion.facets.geography[0].substring(0, 3))]) {
+						return false;
+					}
+					// Remove unsupported entity types
+					if (unsupportedEntities.indexOf(suggestion.type) === -1) {
+						if (suggestion.type === 'geographies') {
+							// DO NOT return if pseudo markers are found. Inverse of normal logic of this function's usage.
+							return !checkPseudoGeos(suggestion.codes[0]);
+						} else {
+							return true;
+						}
+					}
+				});
+			}
+		});
+	}
+
+	return {
+		init: init,
+		subscribe: subscribe,
+		subscriptionOptions: function () { return Object.keys(streams); },
+		typeahead: typeahead,
+		getQuery: isolateQueryParam
+	};
+
+})($);
+var CensusDataTools = (function() {
+    var supportedGeoLevels = {
+		'040': 'state',
+        '050': 'county',
+        '160': 'city'
+	};
+
+    var dataTools = {
+        popClock: {
+            title: 'U.S. and World Population Clock',
+            description: 'See U.S. population by date, region, age and sex, and the top 10 areas by people and density. The world view has basic facts, trade, and projections by country.',
+            image: '/content/census/en/data/data-tools/population-clock.listitemgallery.png/1550273046380/popclock_bkg_260.png',
+            link: '/data/data-tools/population-clock.html',
+            ctaText: 'View POPCLOCK'
+        },
+        quickfacts: {
+            title: 'QuickFacts',
+            description: 'QuickFacts provides frequently requested Census Bureau information at the national, state, county, and city level.',
+            image: '/content/census/en/data/data-tools/quickfacts.listitemgallery.png/1550273049627/quickfacts_160x100.png',
+            link: '//www.census.gov/quickfacts/table/PST045215/',
+            ctaText: 'View QUICKFACTS'
+        }
+    };
+
+    function findLocation(entities) {
+        for (let i = 0; i < entities.length; i++) {
+            if ( entities[i].options ) {
+                for (let j = 0; j < entities[i].options.length; j++) {
+                    const entry = entities[i].options[j];
+                    const locationType = entry?.type;
+                    const locationCode = entry?.facets.geography && entry?.facets.geography[0].slice( 0, 3 );
+                    const isSelectedExist = "selected" in entry ? (entry.selected) : null;
+                    if (locationType === "geography" &&  supportedGeoLevels[locationCode] && (isSelectedExist === null || isSelectedExist)) {
+                        return entry;
+                    }
+                }
+            }
+        }
+    }
+
+    function init() {
+        SearchDataService.subscribe( 'entities' ).then( function( entities ) {
+            const location = findLocation(entities);
+            if (location) {
+          		var splitGeoCode = location.facets.geography[0].split( 'US' );
+                var FIPSCode = splitGeoCode.length > 1 ? splitGeoCode[1] : '';
+                buildQuickfacts( FIPSCode );     
+            } else {
+                  // Pop Clock is mutually exclusive to Quickstats
+                var query = SearchDataService.getQuery();
+                if ( query.toLowerCase().indexOf( 'population' ) !== -1 ) {
+                    buildDataTool( dataTools.popClock );
+                }
+            }
+        });
+    }
+
+    function buildQuickfacts( geoLevel ) {
+          // Clone quickfacts component and fully build link URL
+        var quickfactsConfig = JSON.parse( JSON.stringify( dataTools.quickfacts ) );
+        quickfactsConfig.link += geoLevel;
+
+        buildDataTool( quickfactsConfig );
+    }
+
+    function buildDataTool( config ) {
+        var $dataTool = $( '<div class="uscb-data-tool-box"></div>' );
+        $dataTool.html(       
+            '<div class="uscb-data-tool-box-top">' +
+            '    <h3 class="uscb-data-tool-box-title">' + config.title + '</h3>' + 
+            '    <p class="uscb-data-tool-box-teaser">' + config.description + '</p>' + 
+            '    <div class="uscb-data-tool-box-action-button">' +
+            '        <a class="btn btn-primary btn-md" href="' + config.link +'" onclick="linkClick(this, \'Data Tool Container Component\');">' + config.ctaText + '</a>' +
+            '    </div>' +
+            '</div>' +
+            '<div class="inner-box"></div>' );
+
+        $( '.datatoolcontainer' ).append( $dataTool ); 
+    }
+
+    return {
+        init: init
+    };
+})();
+var CensusSearchFeaturedResults = (function () {
+	'use strict';
+
+	function init(overrideQuery, uniqueID, dataTableLink, isEditMode) {
+		const ele = document.getElementById(uniqueID);
+		const loadingIndicator = getNextSibling(ele, '.uscb-loading-circular-indeterminate');
+
+		// jQuery dependency
+		SearchDataService.subscribe('featuredresults', overrideQuery)
+			.done((result) => {
+				loadingIndicator.classList.add('uscb-hide');
+				populateFeaturedResult(ele, result, dataTableLink, isEditMode);
+			}).fail((error) => {
+				console.error('[CensusSearchFeaturedResults] error', error);
+			}).always(() => {
+				loadingIndicator.classList.add('uscb-hide');
+			});
+	}
+
+	function populateFeaturedResult(ele, featuredResults, dataTableLink, isEditMode) {
+		const enhancedInsightCard = "enhanced-insight-card";
+		const classicInfoBlock = "classic-info-block";
+		const selectedContainerName = ele.parentElement.classList.contains('enhanced-insight-card') ? enhancedInsightCard : classicInfoBlock;
+		const containerEle = ele.querySelector(`.uscb-quick-answer-container__${selectedContainerName}`);
+
+		if (isJSONEmpty(featuredResults)) {
+			hideComponent(containerEle, true, isEditMode, 'No data returned from API');
+			return;
+		}
+
+		let sourceText = "";
+		if (featuredResults.hasOwnProperty('geoName')) {
+			if (selectedContainerName === enhancedInsightCard) {
+				sourceText = featuredResults.tableName?.includes('.') ? featuredResults.tableName.split('.')[1] : ''
+			}
+		} else {
+			hideComponent(containerEle, true, isEditMode, 'No featuredResults.geoName returned from API');
+			return;
+		}
+
+		if (featuredResults.hasOwnProperty('label')) {
+			if (selectedContainerName === enhancedInsightCard) {
+				containerEle.querySelector('.uscb-featured-results-quick-header').innerText = getShortTitle(featuredResults.label);
+				containerEle.querySelector('.uscb-data-quick-answer-label').innerText = featuredResults.label;
+				containerEle.querySelector('.uscb-featured-results-quick-col-1').innerHTML = getImageElement(featuredResults.label);
+			} else {
+				containerEle.querySelector('.uscb-data-quick-answer-label').innerHTML = `${featuredResults.label}<span class="uscb-featured-result-geography"> in ${featuredResults.geoName}</span>`;
+			}
+		} else {
+			hideComponent(containerEle, true, isEditMode, 'No featuredResults.label returned from API');
+			return;
+		}
+
+		if (featuredResults.hasOwnProperty('estimate') && featuredResults.hasOwnProperty('format')) {
+			let marginOfError = '';
+			if (featuredResults.hasOwnProperty('marginOfError')) {
+				marginOfError = featuredResults.marginOfError;
+			}
+
+			let formattedEstimate = featuredResults.estimate;
+			let formattedMoE = featuredResults.marginOfError;
+			const moeIsNumber = !isNaN(parseFloat(formattedMoE));
+
+			// If the last character of the value is not a number, treat is as a string.
+			// Otherwise, format it.
+			if (!isNaN(formattedEstimate[formattedEstimate.length - 1])) {
+				const estimateDecimals = determineDecimals(featuredResults.estimate);
+
+				switch (featuredResults.format) {
+					case 'commas,dollar':
+					case 'dollar':
+						formattedEstimate = formatCurrency(featuredResults.estimate, estimateDecimals);
+						if (moeIsNumber) {
+							formattedMoE = formatCurrency(featuredResults.marginOfError, estimateDecimals);
+						}
+						break;
+					case 'percent':
+						formattedEstimate = formatPercent(featuredResults.estimate, estimateDecimals);
+						if (moeIsNumber) {
+							formattedMoE = formatPercent(featuredResults.marginOfError, estimateDecimals);
+						}
+						break;
+					case 'commas':
+					default:
+						formattedEstimate = formatNumber(featuredResults.estimate, estimateDecimals);
+						if (moeIsNumber) {
+							formattedMoE = formatNumber(featuredResults.marginOfError, estimateDecimals);
+						}
+				}
+			}
+
+			if (formattedMoE && formattedMoE.length && (selectedContainerName !== enhancedInsightCard)) {
+				formattedMoE = '+/- ' + formattedMoE;
+				containerEle.querySelector('.uscb-margin-of-error').innerText = formattedMoE;
+			}
+
+			containerEle.querySelector('.uscb-data-quick-answer-value').innerText = formattedEstimate;
+		} else {
+			hideComponent(containerEle, true, isEditMode, 'No featuredResults.estimate/format returned from API');
+			return;
+		}
+
+		if (featuredResults.hasOwnProperty('sourceLink') && featuredResults.hasOwnProperty('dataSource')) {
+			if (dataTableLink === '') { dataTableLink = 'https://data.census.gov/all?q=population'; } // default to "Population"
+
+			const sourceLinkContainer = containerEle.querySelector('.uscb-data-quick-answer-source');
+
+			const sourceLink = document.createElement('a');
+			sourceLink.setAttribute('href', dataTableLink);
+
+			if (sourceLinkContainer) {
+				const sourceDescription = document.createElement('a');
+				sourceDescription.setAttribute('href', featuredResults.sourceLink);
+
+				if (selectedContainerName === enhancedInsightCard) {
+
+					sourceLink.classList.add('uscb-data-quick-answer-source__hyperlinks');
+					sourceLink.innerText = sourceText;
+					sourceLinkContainer.appendChild(sourceLink);
+
+					const separator = document.createElement('span');
+					separator.classList.add('uscb-data-quick-answer-source__separator');
+					separator.innerText = ' | ';
+					sourceLinkContainer.appendChild(separator);
+
+					sourceDescription.innerText = featuredResults.dataSource;
+
+					const sourceDescriptionWrap = document.createElement('span');
+					sourceDescriptionWrap.classList.add('uscb-data-quick-answer-source__description');
+					sourceDescriptionWrap.appendChild(sourceDescription);
+
+					sourceLinkContainer.appendChild(sourceDescriptionWrap);
+				} else {
+					sourceDescription.innerText = 'Source: ' + featuredResults.dataSource;
+					sourceLinkContainer.appendChild(sourceDescription);
+				}
+			}
+
+			const dataTableLinkContainer = containerEle.querySelector('.uscb-data-table');
+			if (dataTableLinkContainer) {
+				if (selectedContainerName === enhancedInsightCard) {
+					dataTableLinkContainer.remove(); // already included in sourceLinkContainer
+				} else {
+					sourceLink.innerText = 'Data Table';
+					dataTableLinkContainer.appendChild(sourceLink);
+				}
+			}
+		} else {
+			hideComponent(containerEle, true, isEditMode, 'No featuredResults.sourceLink/dataSource returned from API');
+			return;
+		}
+
+		containerEle.classList.remove('uscb-hide');
+	}
+
+	function hideComponent(containerEle, forceHide, isEditMode, errorMessage) {
+		// if it's publish mode and needs to hide
+		if (isEditMode === 'false' && forceHide) {
+			containerEle.classList.add('uscb-hide');
+		} else {
+			containerEle.classList.remove('uscb-hide');
+
+			if (isEditMode === 'true' && forceHide) {
+				containerEle.innerText = `Error loading results${errorMessage ? ': ' + errorMessage : ''}`;
+			}
+		}
+	}
+
+	function isJSONEmpty(obj) {
+		for (var key in obj) {
+			if (obj.hasOwnProperty(key)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	function getNextSibling(elem, selector) {
+		const sibling = elem.nextElementSibling;
+		if (!selector) return sibling;
+
+		while (sibling) {
+			if (sibling.matches(selector)) return sibling;
+			sibling = sibling.nextElementSibling;
+		}
+
+		return null;
+	}
+
+	function determineDecimals(num) {
+		if (Math.floor(num) === num) {
+			return 0;
+		} else {
+			var split = num.toString().split('.');
+			if (split.length > 1) {
+				return split[1].length;
+			} else {
+				return 0;
+			}
+		}
+	}
+
+	//Assuming only dollars are used
+	function formatCurrency(amount, minimumDigits) {
+		if (amount) {
+			const formatter = new Intl.NumberFormat('en-US', {
+				style: 'currency',
+				currency: 'USD',
+				minimumFractionDigits: minimumDigits || 0
+			});
+
+			return formatter.format(amount);
+		}
+	}
+
+	function formatPercent(amount, minimumDigits) {
+		if (amount) {
+			return formatNumber(amount, minimumDigits) + '%';
+		}
+	}
+
+	function formatNumber(amount, minimumDigits) {
+		if (amount) {
+			const formatter = new Intl.NumberFormat('en-US', {
+				minimumFractionDigits: minimumDigits
+			});
+
+			return formatter.format(amount);
+		}
+	}
+
+	function getShortTitle(label) {
+		const titleMap = {
+			"total population": "Populations and People",
+			"median household income": "Income and Poverty",
+			"bachelor's degree or higher": "Education",
+			"employment rate": "Employment",
+			"total housing units": "Housing",
+			"without health care coverage": "Health",
+			"total employer establishments": "Business and Economy",
+			"total households": "Families and Living Arrangements",
+			"hispanic or latino (of any race)": "Race and Ethnicity"
+		};
+
+		return titleMap[label.toLowerCase()] || '';
+	}
+
+	function getImageElement(label) {
+		const iconMap = {
+			"business": [
+				'agriculture, forestry, fishing and hunting, and mining',
+				'total employer establishments',
+				'total manufactures shipments (in thousands)',
+			],
+			"education": [
+				'bachelor\'s degree or higher',
+				'high school graduate or higher',
+				'school enrolled population enrolled in kindergarten to 12th grade',
+			],
+			"employment": [
+				'employment rate',
+				'females in computer, engineering and science occupations',
+				'local, state, and federal government workers',
+				'mean usual hours worked for workers',
+				'total employment',
+			],
+			"family": [
+				'average family size',
+				'never married',
+				'same sex married couple households',
+				'total households',
+			],
+			'geography': [
+				'average travel time to work (in minutes)',
+			],
+			"health": [
+				'public health insurance',
+				'without health care coverage',
+			],
+			"housing": [
+				"median value for mobile homes",
+				'group quarters population',
+				'homeownership rate',
+				'less than $500',
+				'median gross rent',
+				'median housing value',
+				'moved 2021 or later into occupied housing unit',
+				'moved from a different state in the last year',
+				'occupied housing units',
+				'total housing units',
+				'vacant housing units',
+			],
+			"income": [
+				'female median year-round, full-time earnings',
+				'median earnings for workers',
+				'median household income',
+				'per capita income',
+				'poverty, all people',
+				'poverty, under 18 years old',
+				'total annual payroll (in thousands)',
+			],
+			"people": [
+				'65 years and older',
+				'disabled population',
+				'median age',
+				'total population',
+				'under 18 years old',
+				'veterans',
+				'women 15 to 50 years old',
+			],
+			"race": [
+				'american indian and alaska native alone',
+				'asian alone',
+				'black or african american alone',
+				'foreign-born population',
+				'hispanic or latino (of any race)',
+				'language other than english spoken at home',
+				'native hawaiian and other pacific islander alone',
+				'some other race alone',
+				'spanish speakers',
+				'two or more races',
+				'white alone',
+				'white alone, not hispanic or latino',
+				'without an internet subscription',
+			],
+		};
+
+		let iconName;
+		for (const icon of Object.keys(iconMap)) {
+			const labels = iconMap[icon];
+			if (labels.includes(label.toLowerCase().trim())) {
+				iconName = icon;
+			}
+		}
+
+		if (iconName) {
+			return `<img
+				src="/etc.clientlibs/census/clientlibs/cedsci-icons/resources/${iconName}.svg"
+				alt="Icon"/>`;
+		}
+
+		console.warn(`[search-feature-results] No icon for ${label}`);
+		return '';
+	}
+
+	return {
+		init: init
+	}
+})(jQuery);
+
+var CensusSearchProfile = ( function() {
+	'use strict';
+	
+	var supportedGeoLevels = {};
+
+	function init( queryOverride, uniqueID, rawSupportedGeoLevels ) {
+		supportedGeoLevels = convertGeoLevels( rawSupportedGeoLevels );
+		SearchDataService.subscribe( 'profiles', queryOverride ).then( function( response ) {
+			  // Hide the loading indicator
+			var $parentElement = $( '#' + uniqueID );
+			$parentElement.find( '.uscb-loading-circular-indeterminate' ).toggleClass( 'uscb-hide' );
+
+              // Only display first profile. Results are ranked by relevance, but multiple may return for searches without specific geographies.
+			if ( response.length > 0 ) {
+                var profile = findFirstNonTableResult( response );
+				if ( profile ) {
+                    buildProfile( profile, $parentElement );
+                }
+			}
+		}, function( error ) {
+			  // Until we can ignore IE, we have to do it this way and not use .finally() which would be cleanest
+			  	// Hide the loading indicator
+			var $parentElement = $( '#' + uniqueID );
+			$parentElement.find( '.uscb-loading-circular-indeterminate' ).toggleClass( 'uscb-hide' );
+		});
+    }
+
+	function convertGeoLevels( raw ) {
+		var converted = {};
+		  // Java returns null as a *string* if the object doesn't exist so that needs to be checked explicitly as it is technically a truthy value
+		if ( raw && raw !== 'null' ) {
+			var parsed = JSON.parse( raw );
+			parsed.forEach( function( geo ) {
+				converted[ geo.code ] = geo.level;
+			});
+		}
+
+		return converted;
+	}
+
+    function findFirstNonTableResult( profiles ) {
+        for ( var i = 0; i < profiles.length; i++ ) {
+            if ( profiles[ i ].suggestionType != 'table' && profiles[ i ].suggestionType != 'tables' ) {
+                return profiles[ i ];
+            }
+        }
+    }
+
+	function buildProfile( profile, $parentElement ) {
+        const geoValue = profile.facets.geography && profile.facets.geography[0];
+        if ( supportedGeoLevels && geoValue && supportedGeoLevels[ ( profile.facets.geography[0].substring(0, 3) ) ] ) {
+            var html = '' +
+                '<div>' +
+                    '<div class="uscb-profile-result-container" tabindex="0">' +
+                        '<div class="uscb-profile-result-title">' + profile.title + ' Profile' + '</div>' +
+                        '<div class="uscb-profile-result-description-container">' +
+                            '<div class="uscb-profile-result-description-text">' + profile.teaser + '</div>' +
+                        '</div>' +
+                        '<a class="uscb-profile-result-view-profile" href="' + 'https://data.census.gov/cedsci/profile?g=' + geoValue + '">View Profile <i class="o-angle-right-circle-2"></i> </a>' +
+                    '</div>' +
+                '</div>';
+
+            $parentElement.append( html );
+        }
+	}
+
+	return {
+        init: init
+    }
+})(jQuery);
+

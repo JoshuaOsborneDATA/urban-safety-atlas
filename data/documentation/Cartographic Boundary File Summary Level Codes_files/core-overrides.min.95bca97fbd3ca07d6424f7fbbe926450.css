@@ -1,0 +1,320 @@
+  /* Title Core */
+    /* This set of styles applies to the title regardless of the actual heading element used */
+.titlecore.uscb-title-core-h1 .cmp-title__text {
+  font-size: 2.8125rem !important;
+}
+
+.titlecore.uscb-title-core-h2 .cmp-title__text {
+  font-size: 2.125rem !important;
+}
+
+.titlecore.uscb-title-core-h3 .cmp-title__text {
+  font-size: 1.5rem !important;
+}
+
+.titlecore.uscb-title-core-h4 .cmp-title__text {
+  font-size: 1.25rem !important;
+}
+
+.titlecore.uscb-title-core-h5 .cmp-title__text {
+  font-size: 1.125rem !important;
+}
+
+.titlecore.uscb-title-core-h6 .cmp-title__text {
+  font-size: 1rem !important;
+}
+
+.cmp-title__text {
+  font-family: "Roboto", sans-serif;
+  letter-spacing: 0;
+  font-weight: 500;
+}
+
+  /* This set cares about the element. This is the one that should be used. */
+h1.cmp-title__text {
+  font-size: 2.8125rem;
+}
+
+h2.cmp-title__text {
+  font-size: 2.125rem;
+}
+
+h3.cmp-title__text {
+  font-size: 1.5rem;
+}
+
+h4.cmp-title__text {
+  font-size: 1.25rem;
+}
+
+h5.cmp-title__text {
+  font-size: 1.125rem;
+}
+
+h6.cmp-title__text {
+  font-size: 1rem;
+}
+
+  /* Text Core */
+.textcore * {
+  font-family: Roboto;
+}
+
+.textcore.uscb-text-core-sans * {
+  font-family: "Roboto", sans-serif !important;
+}
+
+.textcore.uscb-text-core-sans-condensed * {
+  font-family: "Roboto Condensed", sans-serif !important;
+}
+
+  /* Uncategorized  */
+.uscb-text__author .cmp-text p {
+	font-size: 0.875rem;
+	text-transform: uppercase;
+	color: #4b636e;
+	letter-spacing: 0;
+    font-family: "Roboto", sans-serif;
+    line-height: 16px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.uscb-text__subfeature .cmp-text p {
+    font-size: 1.125rem;
+    letter-spacing: 0;
+    line-height: 25px;
+    color: #000;
+}
+
+.uscb-text__source .cmp-text p {
+	font-size: 14px;
+	line-height: 16px;
+	font-family: "Roboto", sans-serif;
+}
+.uscb-text__source .cmp-text h1,
+.uscb-text__source .cmp-text h2,
+.uscb-text__source .cmp-text h3,
+.uscb-text__source .cmp-text h4,
+.uscb-text__source .cmp-text h5,
+.uscb-text__source .cmp-text h6 {
+	font-family: "Roboto", sans-serif;
+}
+
+.cmp-text ul li, .cmp-teaser ul li, .cmp-download ul li {
+	list-style-type: disc;
+	margin-left: 30px;
+}
+
+.cmp-text ol li, .cmp-teaser ol li, .cmp-download ol li {
+	list-style-type: decimal;
+	margin-left: 40px;
+}
+
+/* CMS-10389 ([Embeddable Image] Image does not resize in mobile) */
+.embeddableimage img {
+    max-width: 100%;
+    display: block;
+ }
+
+.textcore.uscb-border-LR-medium {
+	border-left-color: #000;
+    border-left-style: solid;
+    border-left-width: medium !important;
+    border-right-color: #000;
+    border-right-style: solid;
+    border-right-width: medium !important;
+}
+
+.textcore.uscb-border-TB-medium {
+	border-top-color: #000;
+    border-top-style: solid;
+    border-top-width: medium !important;
+    border-bottom-color: #000;
+    border-bottom-style: solid;
+    border-bottom-width: medium !important;
+}
+
+.textcore.uscb-font-xs p {
+  font-size: .75rem; }
+
+.textcore.uscb-font-sm p {
+  font-size: .875rem; }
+
+.textcore.uscb-font-md p {
+  font-size: 1.125rem; }
+
+.textcore.uscb-font-lg p {
+  font-size: 1.25rem; }
+
+.textcore.uscb-font-xl p {
+  font-size: 1.5rem; }
+  
+.textcore.uscb-font-2x p {
+  font-size: 2rem; }
+
+.textcore.uscb-font-3x p {
+  font-size: 3rem; }
+  
+@media screen and (max-width: 576px) {
+	.inheritedreference .teasercore .uscb-banner-image-container {
+		height: auto;
+	}
+}
+
+.teasercore .cmp-teaser__image-link .cmp-teaser__image,
+.teasercore.uscb-teaser__bannerimage .cmp-teaser__image img {
+}
+
+.uscb-teaser__bannerimage.teasercore .cmp-teaser__image-link .cmp-teaser__image {
+	display: block;
+}
+
+.uscb-teaser__bannerimage .cmp-teaser {
+	position: relative;
+	text-align: center;
+}
+
+.uscb-teaser__bannerimage .cmp-teaser__title {
+	position: absolute;
+	text-align: left;
+    top: calc(50% - 24px);
+    background-color: #fff;
+    text-decoration: none;
+    font-family: "Roboto", sans-serif;
+    font-size: 2.125rem;
+    letter-spacing: 0;
+    font-weight: 400;
+    line-height: 40px;
+    color: #112e51;
+    padding: 20px 24px;
+    z-index: 3;
+}
+
+.uscb-teaser__bannerimage .cmp-teaser__title a {
+	display: inline-block;
+	color: #112e51;
+}
+
+.uscb-teaser__bannerimage .cmp-teaser__title a:hover {
+	text-decoration: none;
+}
+
+.uscb-teaser__bannerimage.uscb-teaser__defaultcolor .cmp-teaser__title {
+	background-color: #FFF;
+}
+
+.uscb-teaser__bannerimage.uscb-teaser__defaultcolor .cmp-teaser__title a {
+	color: #112e51;
+}
+
+.uscb-teaser__bannerimage.uscb-teaser__blueandwhite .cmp-teaser__title,
+.uscb-teaser__bannerimage.uscb-teaser__blueandwhite .cmp-teaser__title a {
+	background-color: #112E51;
+	color: #FFFFFF;
+}
+
+.uscb-teaser__bannerimage.uscb-teaser__opaque .cmp-teaser__image .uscb-banner-image-background {
+	opacity: 1;
+}
+
+.uscb-teaser__bannerimage.uscb-teaser__medium .cmp-teaser__image .uscb-banner-image-background {
+	opacity: 0.5;
+}
+
+.uscb-teaser__bannerimage.uscb-teaser__tranparent .cmp-teaser__image .uscb-banner-image-background {
+	opacity: 0.25;
+}
+
+.uscb-teaser__bannerimage .cmp-teaser__image .uscb-banner-image-container {
+	height: 600.0px;
+    min-height: 300px;
+    max-height: 600px;
+    object-fit: cover;
+}
+
+@media (min-width: 1280px) {
+	.uscb-teaser__bannerimage .cmp-teaser {
+	    margin-left: calc(-100vw / 2 + 1280px / 2);
+	    margin-right: calc(-100vw / 2 + 1280px / 2);
+	}
+}
+
+.uscb-list__relatedinfo .cmp-list__item-link {
+	text-transform: none;
+    color: #008392 !important;
+    line-height: 18px;
+    font-size: 14px;
+    letter-spacing: 0;
+    font-weight: normal;
+}
+
+.uscb-list__relatedinfo .cmp-list__item-date {
+	display: none;
+}
+
+.uscb-list__relatedinfo .cmp-list__item-description {
+	display: none;
+}
+
+.uscb-list__relatedinfo .relatedinfo-title {
+	display: block !important;
+}
+
+.uscb-list__relatedinfo .cmp-list__item {
+	margin-bottom: 15px;
+}
+
+
+/*new one*/
+.uscb-list__relatedinfo .uscb-color-secondary-1 span:nth-child(2) {
+  display: none;
+}
+
+.uscb-list__relatedinfo .uscb-color-secondary-1 span:nth-child(3) {
+  display: none;
+}
+
+.uscb-list__relatedinfo p.uscb-title-3 {
+	text-transform: none;
+    color: #008392 !important;
+    line-height: 18px;
+    font-size: 14px !important;
+    letter-spacing: 0;
+    font-weight: normal;    
+    letter-spacing: 0;
+    font-family: "Roboto", sans-serif;
+    line-height: 16px;
+    margin-bottom: 15px;
+}
+
+.uscb-list__relatedinfo .uscb-list-item-container p.uscb-sub-heading-2.uscb-color-secondary-1.uscb-uppercase {
+	display: block;
+}
+
+.uscb-list__relatedinfo .uscb-list-item-container p.uscb-sub-heading-2.uscb-color-secondary-1 {
+	display: none;
+}
+
+.uscb-list__relatedinfo .uscb-list-item-container hr.uscb-light-teal-hr {
+	display: none;
+}
+
+.uscb-list__relatedinfo .listContent .data-uscb-list-articles-container hr {
+	display: none;
+}
+
+.uscb-linklist__relatedinfo .relatedinfo-title {
+	display: block !important;
+}
+
+.uscb-linklist__relatedinfo ul.uscb-link-list {
+	list-style: none;
+	margin-left: 0px;
+}
+
+.uscb-linklist__relatedinfo .uscb-link-list > li {	
+	line-height: 16px;
+	margin-bottom: 15px;
+	font-size: 14px !important;
+}

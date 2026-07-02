@@ -1,0 +1,3202 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<!-- saved from url=(0073)https://aqs.epa.gov/aqsweb/airdata/FileFormats.html#_annual_summary_files -->
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="generator" content="AsciiDoc 8.6.8">
+<title>AirData Download Files Documentation</title>
+<style type="text/css">
+/* Shared CSS for AsciiDoc xhtml11 and html5 backends */
+
+/* Default font. */
+body {
+  font-family: Georgia,serif;
+}
+
+/* Title font. */
+h1, h2, h3, h4, h5, h6,
+div.title, caption.title,
+thead, p.table.header,
+#toctitle,
+#author, #revnumber, #revdate, #revremark,
+#footer {
+  font-family: Arial,Helvetica,sans-serif;
+}
+
+body {
+  margin: 1em 5% 1em 5%;
+}
+
+a {
+  color: blue;
+  text-decoration: underline;
+}
+a:visited {
+  color: fuchsia;
+}
+
+em {
+  font-style: italic;
+  color: navy;
+}
+
+strong {
+  font-weight: bold;
+  color: #083194;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #527bbd;
+  margin-top: 1.2em;
+  margin-bottom: 0.5em;
+  line-height: 1.3;
+}
+
+h1, h2, h3 {
+  border-bottom: 2px solid silver;
+}
+h2 {
+  padding-top: 0.5em;
+}
+h3 {
+  float: left;
+}
+h3 + * {
+  clear: left;
+}
+h5 {
+  font-size: 1.0em;
+}
+
+div.sectionbody {
+  margin-left: 0;
+}
+
+hr {
+  border: 1px solid silver;
+}
+
+p {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+ul, ol, li > p {
+  margin-top: 0;
+}
+ul > li     { color: #aaa; }
+ul > li > * { color: black; }
+
+.monospaced, code, pre {
+  font-family: "Courier New", Courier, monospace;
+  font-size: inherit;
+  color: navy;
+  padding: 0;
+  margin: 0;
+}
+
+
+#author {
+  color: #527bbd;
+  font-weight: bold;
+  font-size: 1.1em;
+}
+#email {
+}
+#revnumber, #revdate, #revremark {
+}
+
+#footer {
+  font-size: small;
+  border-top: 2px solid silver;
+  padding-top: 0.5em;
+  margin-top: 4.0em;
+}
+#footer-text {
+  float: left;
+  padding-bottom: 0.5em;
+}
+#footer-badges {
+  float: right;
+  padding-bottom: 0.5em;
+}
+
+#preamble {
+  margin-top: 1.5em;
+  margin-bottom: 1.5em;
+}
+div.imageblock, div.exampleblock, div.verseblock,
+div.quoteblock, div.literalblock, div.listingblock, div.sidebarblock,
+div.admonitionblock {
+  margin-top: 1.0em;
+  margin-bottom: 1.5em;
+}
+div.admonitionblock {
+  margin-top: 2.0em;
+  margin-bottom: 2.0em;
+  margin-right: 10%;
+  color: #606060;
+}
+
+div.content { /* Block element content. */
+  padding: 0;
+}
+
+/* Block element titles. */
+div.title, caption.title {
+  color: #527bbd;
+  font-weight: bold;
+  text-align: left;
+  margin-top: 1.0em;
+  margin-bottom: 0.5em;
+}
+div.title + * {
+  margin-top: 0;
+}
+
+td div.title:first-child {
+  margin-top: 0.0em;
+}
+div.content div.title:first-child {
+  margin-top: 0.0em;
+}
+div.content + div.title {
+  margin-top: 0.0em;
+}
+
+div.sidebarblock > div.content {
+  background: #ffffee;
+  border: 1px solid #dddddd;
+  border-left: 4px solid #f0f0f0;
+  padding: 0.5em;
+}
+
+div.listingblock > div.content {
+  border: 1px solid #dddddd;
+  border-left: 5px solid #f0f0f0;
+  background: #f8f8f8;
+  padding: 0.5em;
+}
+
+div.quoteblock, div.verseblock {
+  padding-left: 1.0em;
+  margin-left: 1.0em;
+  margin-right: 10%;
+  border-left: 5px solid #f0f0f0;
+  color: #888;
+}
+
+div.quoteblock > div.attribution {
+  padding-top: 0.5em;
+  text-align: right;
+}
+
+div.verseblock > pre.content {
+  font-family: inherit;
+  font-size: inherit;
+}
+div.verseblock > div.attribution {
+  padding-top: 0.75em;
+  text-align: left;
+}
+/* DEPRECATED: Pre version 8.2.7 verse style literal block. */
+div.verseblock + div.attribution {
+  text-align: left;
+}
+
+div.admonitionblock .icon {
+  vertical-align: top;
+  font-size: 1.1em;
+  font-weight: bold;
+  text-decoration: underline;
+  color: #527bbd;
+  padding-right: 0.5em;
+}
+div.admonitionblock td.content {
+  padding-left: 0.5em;
+  border-left: 3px solid #dddddd;
+}
+
+div.exampleblock > div.content {
+  border-left: 3px solid #dddddd;
+  padding-left: 0.5em;
+}
+
+div.imageblock div.content { padding-left: 0; }
+span.image img { border-style: none; }
+a.image:visited { color: white; }
+
+dl {
+  margin-top: 0.8em;
+  margin-bottom: 0.8em;
+}
+dt {
+  margin-top: 0.5em;
+  margin-bottom: 0;
+  font-style: normal;
+  color: navy;
+}
+dd > *:first-child {
+  margin-top: 0.1em;
+}
+
+ul, ol {
+    list-style-position: outside;
+}
+ol.arabic {
+  list-style-type: decimal;
+}
+ol.loweralpha {
+  list-style-type: lower-alpha;
+}
+ol.upperalpha {
+  list-style-type: upper-alpha;
+}
+ol.lowerroman {
+  list-style-type: lower-roman;
+}
+ol.upperroman {
+  list-style-type: upper-roman;
+}
+
+div.compact ul, div.compact ol,
+div.compact p, div.compact p,
+div.compact div, div.compact div {
+  margin-top: 0.1em;
+  margin-bottom: 0.1em;
+}
+
+tfoot {
+  font-weight: bold;
+}
+td > div.verse {
+  white-space: pre;
+}
+
+div.hdlist {
+  margin-top: 0.8em;
+  margin-bottom: 0.8em;
+}
+div.hdlist tr {
+  padding-bottom: 15px;
+}
+dt.hdlist1.strong, td.hdlist1.strong {
+  font-weight: bold;
+}
+td.hdlist1 {
+  vertical-align: top;
+  font-style: normal;
+  padding-right: 0.8em;
+  color: navy;
+}
+td.hdlist2 {
+  vertical-align: top;
+}
+div.hdlist.compact tr {
+  margin: 0;
+  padding-bottom: 0;
+}
+
+.comment {
+  background: yellow;
+}
+
+.footnote, .footnoteref {
+  font-size: 0.8em;
+}
+
+span.footnote, span.footnoteref {
+  vertical-align: super;
+}
+
+#footnotes {
+  margin: 20px 0 20px 0;
+  padding: 7px 0 0 0;
+}
+
+#footnotes div.footnote {
+  margin: 0 0 5px 0;
+}
+
+#footnotes hr {
+  border: none;
+  border-top: 1px solid silver;
+  height: 1px;
+  text-align: left;
+  margin-left: 0;
+  width: 20%;
+  min-width: 100px;
+}
+
+div.colist td {
+  padding-right: 0.5em;
+  padding-bottom: 0.3em;
+  vertical-align: top;
+}
+div.colist td img {
+  margin-top: 0.3em;
+}
+
+@media print {
+  #footer-badges { display: none; }
+}
+
+#toc {
+  margin-bottom: 2.5em;
+}
+
+#toctitle {
+  color: #527bbd;
+  font-size: 1.1em;
+  font-weight: bold;
+  margin-top: 1.0em;
+  margin-bottom: 0.1em;
+}
+
+div.toclevel0, div.toclevel1, div.toclevel2, div.toclevel3, div.toclevel4 {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+div.toclevel2 {
+  margin-left: 2em;
+  font-size: 0.9em;
+}
+div.toclevel3 {
+  margin-left: 4em;
+  font-size: 0.9em;
+}
+div.toclevel4 {
+  margin-left: 6em;
+  font-size: 0.9em;
+}
+
+span.aqua { color: aqua; }
+span.black { color: black; }
+span.blue { color: blue; }
+span.fuchsia { color: fuchsia; }
+span.gray { color: gray; }
+span.green { color: green; }
+span.lime { color: lime; }
+span.maroon { color: maroon; }
+span.navy { color: navy; }
+span.olive { color: olive; }
+span.purple { color: purple; }
+span.red { color: red; }
+span.silver { color: silver; }
+span.teal { color: teal; }
+span.white { color: white; }
+span.yellow { color: yellow; }
+
+span.aqua-background { background: aqua; }
+span.black-background { background: black; }
+span.blue-background { background: blue; }
+span.fuchsia-background { background: fuchsia; }
+span.gray-background { background: gray; }
+span.green-background { background: green; }
+span.lime-background { background: lime; }
+span.maroon-background { background: maroon; }
+span.navy-background { background: navy; }
+span.olive-background { background: olive; }
+span.purple-background { background: purple; }
+span.red-background { background: red; }
+span.silver-background { background: silver; }
+span.teal-background { background: teal; }
+span.white-background { background: white; }
+span.yellow-background { background: yellow; }
+
+span.big { font-size: 2em; }
+span.small { font-size: 0.6em; }
+
+span.underline { text-decoration: underline; }
+span.overline { text-decoration: overline; }
+span.line-through { text-decoration: line-through; }
+
+div.unbreakable { page-break-inside: avoid; }
+
+
+/*
+ * xhtml11 specific
+ *
+ * */
+
+div.tableblock {
+  margin-top: 1.0em;
+  margin-bottom: 1.5em;
+}
+div.tableblock > table {
+  border: 3px solid #527bbd;
+}
+thead, p.table.header {
+  font-weight: bold;
+  color: #527bbd;
+}
+p.table {
+  margin-top: 0;
+}
+/* Because the table frame attribute is overriden by CSS in most browsers. */
+div.tableblock > table[frame="void"] {
+  border-style: none;
+}
+div.tableblock > table[frame="hsides"] {
+  border-left-style: none;
+  border-right-style: none;
+}
+div.tableblock > table[frame="vsides"] {
+  border-top-style: none;
+  border-bottom-style: none;
+}
+
+
+/*
+ * html5 specific
+ *
+ * */
+
+table.tableblock {
+  margin-top: 1.0em;
+  margin-bottom: 1.5em;
+}
+thead, p.tableblock.header {
+  font-weight: bold;
+  color: #527bbd;
+}
+p.tableblock {
+  margin-top: 0;
+}
+table.tableblock {
+  border-width: 3px;
+  border-spacing: 0px;
+  border-style: solid;
+  border-color: #527bbd;
+  border-collapse: collapse;
+}
+th.tableblock, td.tableblock {
+  border-width: 1px;
+  padding: 4px;
+  border-style: solid;
+  border-color: #527bbd;
+}
+
+table.tableblock.frame-topbot {
+  border-left-style: hidden;
+  border-right-style: hidden;
+}
+table.tableblock.frame-sides {
+  border-top-style: hidden;
+  border-bottom-style: hidden;
+}
+table.tableblock.frame-none {
+  border-style: hidden;
+}
+
+th.tableblock.halign-left, td.tableblock.halign-left {
+  text-align: left;
+}
+th.tableblock.halign-center, td.tableblock.halign-center {
+  text-align: center;
+}
+th.tableblock.halign-right, td.tableblock.halign-right {
+  text-align: right;
+}
+
+th.tableblock.valign-top, td.tableblock.valign-top {
+  vertical-align: top;
+}
+th.tableblock.valign-middle, td.tableblock.valign-middle {
+  vertical-align: middle;
+}
+th.tableblock.valign-bottom, td.tableblock.valign-bottom {
+  vertical-align: bottom;
+}
+
+
+/*
+ * manpage specific
+ *
+ * */
+
+body.manpage h1 {
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+  border-top: 2px solid silver;
+  border-bottom: 2px solid silver;
+}
+body.manpage h2 {
+  border-style: none;
+}
+body.manpage div.sectionbody {
+  margin-left: 3em;
+}
+
+@media print {
+  body.manpage div#toc { display: none; }
+}
+
+
+@media screen {
+  body {
+    max-width: 50em; /* approximately 80 characters wide */
+    margin-left: 16em;
+  }
+
+  #toc {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 13em;
+    padding: 0.5em;
+    padding-bottom: 1.5em;
+    margin: 0;
+    overflow: auto;
+    border-right: 3px solid #f8f8f8;
+    background-color: white;
+  }
+
+  #toc .toclevel1 {
+    margin-top: 0.5em;
+  }
+
+  #toc .toclevel2 {
+    margin-top: 0.25em;
+    display: list-item;
+    color: #aaaaaa;
+  }
+
+  #toctitle {
+    margin-top: 0.5em;
+  }
+}
+</style>
+<script type="text/javascript">
+/*<![CDATA[*/
+var asciidoc = {  // Namespace.
+
+/////////////////////////////////////////////////////////////////////
+// Table Of Contents generator
+/////////////////////////////////////////////////////////////////////
+
+/* Author: Mihai Bazon, September 2002
+ * http://students.infoiasi.ro/~mishoo
+ *
+ * Table Of Content generator
+ * Version: 0.4
+ *
+ * Feel free to use this script under the terms of the GNU General Public
+ * License, as long as you do not remove or alter this notice.
+ */
+
+ /* modified by Troy D. Hanson, September 2006. License: GPL */
+ /* modified by Stuart Rackham, 2006, 2009. License: GPL */
+
+// toclevels = 1..4.
+toc: function (toclevels) {
+
+  function getText(el) {
+    var text = "";
+    for (var i = el.firstChild; i != null; i = i.nextSibling) {
+      if (i.nodeType == 3 /* Node.TEXT_NODE */) // IE doesn't speak constants.
+        text += i.data;
+      else if (i.firstChild != null)
+        text += getText(i);
+    }
+    return text;
+  }
+
+  function TocEntry(el, text, toclevel) {
+    this.element = el;
+    this.text = text;
+    this.toclevel = toclevel;
+  }
+
+  function tocEntries(el, toclevels) {
+    var result = new Array;
+    var re = new RegExp('[hH]([1-'+(toclevels+1)+'])');
+    // Function that scans the DOM tree for header elements (the DOM2
+    // nodeIterator API would be a better technique but not supported by all
+    // browsers).
+    var iterate = function (el) {
+      for (var i = el.firstChild; i != null; i = i.nextSibling) {
+        if (i.nodeType == 1 /* Node.ELEMENT_NODE */) {
+          var mo = re.exec(i.tagName);
+          if (mo && (i.getAttribute("class") || i.getAttribute("className")) != "float") {
+            result[result.length] = new TocEntry(i, getText(i), mo[1]-1);
+          }
+          iterate(i);
+        }
+      }
+    }
+    iterate(el);
+    return result;
+  }
+
+  var toc = document.getElementById("toc");
+  if (!toc) {
+    return;
+  }
+
+  // Delete existing TOC entries in case we're reloading the TOC.
+  var tocEntriesToRemove = [];
+  var i;
+  for (i = 0; i < toc.childNodes.length; i++) {
+    var entry = toc.childNodes[i];
+    if (entry.nodeName.toLowerCase() == 'div'
+     && entry.getAttribute("class")
+     && entry.getAttribute("class").match(/^toclevel/))
+      tocEntriesToRemove.push(entry);
+  }
+  for (i = 0; i < tocEntriesToRemove.length; i++) {
+    toc.removeChild(tocEntriesToRemove[i]);
+  }
+
+  // Rebuild TOC entries.
+  var entries = tocEntries(document.getElementById("content"), toclevels);
+  for (var i = 0; i < entries.length; ++i) {
+    var entry = entries[i];
+    if (entry.element.id == "")
+      entry.element.id = "_toc_" + i;
+    var a = document.createElement("a");
+    a.href = "#" + entry.element.id;
+    a.appendChild(document.createTextNode(entry.text));
+    var div = document.createElement("div");
+    div.appendChild(a);
+    div.className = "toclevel" + entry.toclevel;
+    toc.appendChild(div);
+  }
+  if (entries.length == 0)
+    toc.parentNode.removeChild(toc);
+},
+
+
+/////////////////////////////////////////////////////////////////////
+// Footnotes generator
+/////////////////////////////////////////////////////////////////////
+
+/* Based on footnote generation code from:
+ * http://www.brandspankingnew.net/archive/2005/07/format_footnote.html
+ */
+
+footnotes: function () {
+  // Delete existing footnote entries in case we're reloading the footnodes.
+  var i;
+  var noteholder = document.getElementById("footnotes");
+  if (!noteholder) {
+    return;
+  }
+  var entriesToRemove = [];
+  for (i = 0; i < noteholder.childNodes.length; i++) {
+    var entry = noteholder.childNodes[i];
+    if (entry.nodeName.toLowerCase() == 'div' && entry.getAttribute("class") == "footnote")
+      entriesToRemove.push(entry);
+  }
+  for (i = 0; i < entriesToRemove.length; i++) {
+    noteholder.removeChild(entriesToRemove[i]);
+  }
+
+  // Rebuild footnote entries.
+  var cont = document.getElementById("content");
+  var spans = cont.getElementsByTagName("span");
+  var refs = {};
+  var n = 0;
+  for (i=0; i<spans.length; i++) {
+    if (spans[i].className == "footnote") {
+      n++;
+      var note = spans[i].getAttribute("data-note");
+      if (!note) {
+        // Use [\s\S] in place of . so multi-line matches work.
+        // Because JavaScript has no s (dotall) regex flag.
+        note = spans[i].innerHTML.match(/\s*\[([\s\S]*)]\s*/)[1];
+        spans[i].innerHTML =
+          "[<a id='_footnoteref_" + n + "' href='#_footnote_" + n +
+          "' title='View footnote' class='footnote'>" + n + "</a>]";
+        spans[i].setAttribute("data-note", note);
+      }
+      noteholder.innerHTML +=
+        "<div class='footnote' id='_footnote_" + n + "'>" +
+        "<a href='#_footnoteref_" + n + "' title='Return to text'>" +
+        n + "</a>. " + note + "</div>";
+      var id =spans[i].getAttribute("id");
+      if (id != null) refs["#"+id] = n;
+    }
+  }
+  if (n == 0)
+    noteholder.parentNode.removeChild(noteholder);
+  else {
+    // Process footnoterefs.
+    for (i=0; i<spans.length; i++) {
+      if (spans[i].className == "footnoteref") {
+        var href = spans[i].getElementsByTagName("a")[0].getAttribute("href");
+        href = href.match(/#.*/)[0];  // Because IE return full URL.
+        n = refs[href];
+        spans[i].innerHTML =
+          "[<a href='#_footnote_" + n +
+          "' title='View footnote' class='footnote'>" + n + "</a>]";
+      }
+    }
+  }
+},
+
+install: function(toclevels) {
+  var timerId;
+
+  function reinstall() {
+    asciidoc.footnotes();
+    if (toclevels) {
+      asciidoc.toc(toclevels);
+    }
+  }
+
+  function reinstallAndRemoveTimer() {
+    clearInterval(timerId);
+    reinstall();
+  }
+
+  timerId = setInterval(reinstall, 500);
+  if (document.addEventListener)
+    document.addEventListener("DOMContentLoaded", reinstallAndRemoveTimer, false);
+  else
+    window.onload = reinstallAndRemoveTimer;
+}
+
+}
+asciidoc.install(3);
+/*]]>*/
+</script>
+<script type="text/javascript">
+/*<![CDATA[*/
+/*
+ASCIIMathML.js
+==============
+This file contains JavaScript functions to convert ASCII math notation
+to Presentation MathML. The conversion is done while the (X)HTML page
+loads, and should work with Firefox/Mozilla/Netscape 7+ and Internet
+Explorer 6+MathPlayer (http://www.dessci.com/en/products/mathplayer/).
+Just add the next line to your (X)HTML page with this file in the same folder:
+This is a convenient and inexpensive solution for authoring MathML.
+
+Version 1.4.7 Dec 15, 2005, (c) Peter Jipsen http://www.chapman.edu/~jipsen
+Latest version at http://www.chapman.edu/~jipsen/mathml/ASCIIMathML.js
+For changes see http://www.chapman.edu/~jipsen/mathml/asciimathchanges.txt
+If you use it on a webpage, please send the URL to jipsen@chapman.edu
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or (at
+your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+General Public License (at http://www.gnu.org/copyleft/gpl.html)
+for more details.
+*/
+
+var checkForMathML = true;   // check if browser can display MathML
+var notifyIfNoMathML = true; // display note if no MathML capability
+var alertIfNoMathML = false;  // show alert box if no MathML capability
+var mathcolor = "";       // change it to "" (to inherit) or any other color
+var mathfontfamily = "serif"; // change to "" to inherit (works in IE)
+                              // or another family (e.g. "arial")
+var displaystyle = true;      // puts limits above and below large operators
+var showasciiformulaonhover = true; // helps students learn ASCIIMath
+var decimalsign = ".";        // change to "," if you like, beware of `(1,2)`!
+var AMdelimiter1 = "`", AMescape1 = "\\\\`"; // can use other characters
+var AMdelimiter2 = "$", AMescape2 = "\\\\\\$", AMdelimiter2regexp = "\\$";
+var doubleblankmathdelimiter = false; // if true,  x+1  is equal to `x+1`
+                                      // for IE this works only in <!--   -->
+//var separatetokens;// has been removed (email me if this is a problem)
+var isIE = document.createElementNS==null;
+
+if (document.getElementById==null)
+  alert("This webpage requires a recent browser such as\
+\nMozilla/Netscape 7+ or Internet Explorer 6+MathPlayer")
+
+// all further global variables start with "AM"
+
+function AMcreateElementXHTML(t) {
+  if (isIE) return document.createElement(t);
+  else return document.createElementNS("http://www.w3.org/1999/xhtml",t);
+}
+
+function AMnoMathMLNote() {
+  var nd = AMcreateElementXHTML("h3");
+  nd.setAttribute("align","center")
+  nd.appendChild(AMcreateElementXHTML("p"));
+  nd.appendChild(document.createTextNode("To view the "));
+  var an = AMcreateElementXHTML("a");
+  an.appendChild(document.createTextNode("ASCIIMathML"));
+  an.setAttribute("href","http://www.chapman.edu/~jipsen/asciimath.html");
+  nd.appendChild(an);
+  nd.appendChild(document.createTextNode(" notation use Internet Explorer 6+"));
+  an = AMcreateElementXHTML("a");
+  an.appendChild(document.createTextNode("MathPlayer"));
+  an.setAttribute("href","http://www.dessci.com/en/products/mathplayer/download.htm");
+  nd.appendChild(an);
+  nd.appendChild(document.createTextNode(" or Netscape/Mozilla/Firefox"));
+  nd.appendChild(AMcreateElementXHTML("p"));
+  return nd;
+}
+
+function AMisMathMLavailable() {
+  if (navigator.appName.slice(0,8)=="Netscape")
+    if (navigator.appVersion.slice(0,1)>="5") return null;
+    else return AMnoMathMLNote();
+  else if (navigator.appName.slice(0,9)=="Microsoft")
+    try {
+        var ActiveX = new ActiveXObject("MathPlayer.Factory.1");
+        return null;
+    } catch (e) {
+        return AMnoMathMLNote();
+    }
+  else return AMnoMathMLNote();
+}
+
+// character lists for Mozilla/Netscape fonts
+var AMcal = [0xEF35,0x212C,0xEF36,0xEF37,0x2130,0x2131,0xEF38,0x210B,0x2110,0xEF39,0xEF3A,0x2112,0x2133,0xEF3B,0xEF3C,0xEF3D,0xEF3E,0x211B,0xEF3F,0xEF40,0xEF41,0xEF42,0xEF43,0xEF44,0xEF45,0xEF46];
+var AMfrk = [0xEF5D,0xEF5E,0x212D,0xEF5F,0xEF60,0xEF61,0xEF62,0x210C,0x2111,0xEF63,0xEF64,0xEF65,0xEF66,0xEF67,0xEF68,0xEF69,0xEF6A,0x211C,0xEF6B,0xEF6C,0xEF6D,0xEF6E,0xEF6F,0xEF70,0xEF71,0x2128];
+var AMbbb = [0xEF8C,0xEF8D,0x2102,0xEF8E,0xEF8F,0xEF90,0xEF91,0x210D,0xEF92,0xEF93,0xEF94,0xEF95,0xEF96,0x2115,0xEF97,0x2119,0x211A,0x211D,0xEF98,0xEF99,0xEF9A,0xEF9B,0xEF9C,0xEF9D,0xEF9E,0x2124];
+
+var CONST = 0, UNARY = 1, BINARY = 2, INFIX = 3, LEFTBRACKET = 4,
+    RIGHTBRACKET = 5, SPACE = 6, UNDEROVER = 7, DEFINITION = 8,
+    LEFTRIGHT = 9, TEXT = 10; // token types
+
+var AMsqrt = {input:"sqrt", tag:"msqrt", output:"sqrt", tex:null, ttype:UNARY},
+  AMroot  = {input:"root", tag:"mroot", output:"root", tex:null, ttype:BINARY},
+  AMfrac  = {input:"frac", tag:"mfrac", output:"/",    tex:null, ttype:BINARY},
+  AMdiv   = {input:"/",    tag:"mfrac", output:"/",    tex:null, ttype:INFIX},
+  AMover  = {input:"stackrel", tag:"mover", output:"stackrel", tex:null, ttype:BINARY},
+  AMsub   = {input:"_",    tag:"msub",  output:"_",    tex:null, ttype:INFIX},
+  AMsup   = {input:"^",    tag:"msup",  output:"^",    tex:null, ttype:INFIX},
+  AMtext  = {input:"text", tag:"mtext", output:"text", tex:null, ttype:TEXT},
+  AMmbox  = {input:"mbox", tag:"mtext", output:"mbox", tex:null, ttype:TEXT},
+  AMquote = {input:"\"",   tag:"mtext", output:"mbox", tex:null, ttype:TEXT};
+
+var AMsymbols = [
+//some greek symbols
+{input:"alpha",  tag:"mi", output:"\u03B1", tex:null, ttype:CONST},
+{input:"beta",   tag:"mi", output:"\u03B2", tex:null, ttype:CONST},
+{input:"chi",    tag:"mi", output:"\u03C7", tex:null, ttype:CONST},
+{input:"delta",  tag:"mi", output:"\u03B4", tex:null, ttype:CONST},
+{input:"Delta",  tag:"mo", output:"\u0394", tex:null, ttype:CONST},
+{input:"epsi",   tag:"mi", output:"\u03B5", tex:"epsilon", ttype:CONST},
+{input:"varepsilon", tag:"mi", output:"\u025B", tex:null, ttype:CONST},
+{input:"eta",    tag:"mi", output:"\u03B7", tex:null, ttype:CONST},
+{input:"gamma",  tag:"mi", output:"\u03B3", tex:null, ttype:CONST},
+{input:"Gamma",  tag:"mo", output:"\u0393", tex:null, ttype:CONST},
+{input:"iota",   tag:"mi", output:"\u03B9", tex:null, ttype:CONST},
+{input:"kappa",  tag:"mi", output:"\u03BA", tex:null, ttype:CONST},
+{input:"lambda", tag:"mi", output:"\u03BB", tex:null, ttype:CONST},
+{input:"Lambda", tag:"mo", output:"\u039B", tex:null, ttype:CONST},
+{input:"mu",     tag:"mi", output:"\u03BC", tex:null, ttype:CONST},
+{input:"nu",     tag:"mi", output:"\u03BD", tex:null, ttype:CONST},
+{input:"omega",  tag:"mi", output:"\u03C9", tex:null, ttype:CONST},
+{input:"Omega",  tag:"mo", output:"\u03A9", tex:null, ttype:CONST},
+{input:"phi",    tag:"mi", output:"\u03C6", tex:null, ttype:CONST},
+{input:"varphi", tag:"mi", output:"\u03D5", tex:null, ttype:CONST},
+{input:"Phi",    tag:"mo", output:"\u03A6", tex:null, ttype:CONST},
+{input:"pi",     tag:"mi", output:"\u03C0", tex:null, ttype:CONST},
+{input:"Pi",     tag:"mo", output:"\u03A0", tex:null, ttype:CONST},
+{input:"psi",    tag:"mi", output:"\u03C8", tex:null, ttype:CONST},
+{input:"Psi",    tag:"mi", output:"\u03A8", tex:null, ttype:CONST},
+{input:"rho",    tag:"mi", output:"\u03C1", tex:null, ttype:CONST},
+{input:"sigma",  tag:"mi", output:"\u03C3", tex:null, ttype:CONST},
+{input:"Sigma",  tag:"mo", output:"\u03A3", tex:null, ttype:CONST},
+{input:"tau",    tag:"mi", output:"\u03C4", tex:null, ttype:CONST},
+{input:"theta",  tag:"mi", output:"\u03B8", tex:null, ttype:CONST},
+{input:"vartheta", tag:"mi", output:"\u03D1", tex:null, ttype:CONST},
+{input:"Theta",  tag:"mo", output:"\u0398", tex:null, ttype:CONST},
+{input:"upsilon", tag:"mi", output:"\u03C5", tex:null, ttype:CONST},
+{input:"xi",     tag:"mi", output:"\u03BE", tex:null, ttype:CONST},
+{input:"Xi",     tag:"mo", output:"\u039E", tex:null, ttype:CONST},
+{input:"zeta",   tag:"mi", output:"\u03B6", tex:null, ttype:CONST},
+
+//binary operation symbols
+{input:"*",  tag:"mo", output:"\u22C5", tex:"cdot", ttype:CONST},
+{input:"**", tag:"mo", output:"\u22C6", tex:"star", ttype:CONST},
+{input:"//", tag:"mo", output:"/",      tex:null, ttype:CONST},
+{input:"\\\\", tag:"mo", output:"\\",   tex:"backslash", ttype:CONST},
+{input:"setminus", tag:"mo", output:"\\", tex:null, ttype:CONST},
+{input:"xx", tag:"mo", output:"\u00D7", tex:"times", ttype:CONST},
+{input:"-:", tag:"mo", output:"\u00F7", tex:"divide", ttype:CONST},
+{input:"@",  tag:"mo", output:"\u2218", tex:"circ", ttype:CONST},
+{input:"o+", tag:"mo", output:"\u2295", tex:"oplus", ttype:CONST},
+{input:"ox", tag:"mo", output:"\u2297", tex:"otimes", ttype:CONST},
+{input:"o.", tag:"mo", output:"\u2299", tex:"odot", ttype:CONST},
+{input:"sum", tag:"mo", output:"\u2211", tex:null, ttype:UNDEROVER},
+{input:"prod", tag:"mo", output:"\u220F", tex:null, ttype:UNDEROVER},
+{input:"^^",  tag:"mo", output:"\u2227", tex:"wedge", ttype:CONST},
+{input:"^^^", tag:"mo", output:"\u22C0", tex:"bigwedge", ttype:UNDEROVER},
+{input:"vv",  tag:"mo", output:"\u2228", tex:"vee", ttype:CONST},
+{input:"vvv", tag:"mo", output:"\u22C1", tex:"bigvee", ttype:UNDEROVER},
+{input:"nn",  tag:"mo", output:"\u2229", tex:"cap", ttype:CONST},
+{input:"nnn", tag:"mo", output:"\u22C2", tex:"bigcap", ttype:UNDEROVER},
+{input:"uu",  tag:"mo", output:"\u222A", tex:"cup", ttype:CONST},
+{input:"uuu", tag:"mo", output:"\u22C3", tex:"bigcup", ttype:UNDEROVER},
+
+//binary relation symbols
+{input:"!=",  tag:"mo", output:"\u2260", tex:"ne", ttype:CONST},
+{input:":=",  tag:"mo", output:":=",     tex:null, ttype:CONST},
+{input:"lt",  tag:"mo", output:"<",      tex:null, ttype:CONST},
+{input:"<=",  tag:"mo", output:"\u2264", tex:"le", ttype:CONST},
+{input:"lt=", tag:"mo", output:"\u2264", tex:"leq", ttype:CONST},
+{input:">=",  tag:"mo", output:"\u2265", tex:"ge", ttype:CONST},
+{input:"geq", tag:"mo", output:"\u2265", tex:null, ttype:CONST},
+{input:"-<",  tag:"mo", output:"\u227A", tex:"prec", ttype:CONST},
+{input:"-lt", tag:"mo", output:"\u227A", tex:null, ttype:CONST},
+{input:">-",  tag:"mo", output:"\u227B", tex:"succ", ttype:CONST},
+{input:"-<=", tag:"mo", output:"\u2AAF", tex:"preceq", ttype:CONST},
+{input:">-=", tag:"mo", output:"\u2AB0", tex:"succeq", ttype:CONST},
+{input:"in",  tag:"mo", output:"\u2208", tex:null, ttype:CONST},
+{input:"!in", tag:"mo", output:"\u2209", tex:"notin", ttype:CONST},
+{input:"sub", tag:"mo", output:"\u2282", tex:"subset", ttype:CONST},
+{input:"sup", tag:"mo", output:"\u2283", tex:"supset", ttype:CONST},
+{input:"sube", tag:"mo", output:"\u2286", tex:"subseteq", ttype:CONST},
+{input:"supe", tag:"mo", output:"\u2287", tex:"supseteq", ttype:CONST},
+{input:"-=",  tag:"mo", output:"\u2261", tex:"equiv", ttype:CONST},
+{input:"~=",  tag:"mo", output:"\u2245", tex:"cong", ttype:CONST},
+{input:"~~",  tag:"mo", output:"\u2248", tex:"approx", ttype:CONST},
+{input:"prop", tag:"mo", output:"\u221D", tex:"propto", ttype:CONST},
+
+//logical symbols
+{input:"and", tag:"mtext", output:"and", tex:null, ttype:SPACE},
+{input:"or",  tag:"mtext", output:"or",  tex:null, ttype:SPACE},
+{input:"not", tag:"mo", output:"\u00AC", tex:"neg", ttype:CONST},
+{input:"=>",  tag:"mo", output:"\u21D2", tex:"implies", ttype:CONST},
+{input:"if",  tag:"mo", output:"if",     tex:null, ttype:SPACE},
+{input:"<=>", tag:"mo", output:"\u21D4", tex:"iff", ttype:CONST},
+{input:"AA",  tag:"mo", output:"\u2200", tex:"forall", ttype:CONST},
+{input:"EE",  tag:"mo", output:"\u2203", tex:"exists", ttype:CONST},
+{input:"_|_", tag:"mo", output:"\u22A5", tex:"bot", ttype:CONST},
+{input:"TT",  tag:"mo", output:"\u22A4", tex:"top", ttype:CONST},
+{input:"|--",  tag:"mo", output:"\u22A2", tex:"vdash", ttype:CONST},
+{input:"|==",  tag:"mo", output:"\u22A8", tex:"models", ttype:CONST},
+
+//grouping brackets
+{input:"(", tag:"mo", output:"(", tex:null, ttype:LEFTBRACKET},
+{input:")", tag:"mo", output:")", tex:null, ttype:RIGHTBRACKET},
+{input:"[", tag:"mo", output:"[", tex:null, ttype:LEFTBRACKET},
+{input:"]", tag:"mo", output:"]", tex:null, ttype:RIGHTBRACKET},
+{input:"{", tag:"mo", output:"{", tex:null, ttype:LEFTBRACKET},
+{input:"}", tag:"mo", output:"}", tex:null, ttype:RIGHTBRACKET},
+{input:"|", tag:"mo", output:"|", tex:null, ttype:LEFTRIGHT},
+//{input:"||", tag:"mo", output:"||", tex:null, ttype:LEFTRIGHT},
+{input:"(:", tag:"mo", output:"\u2329", tex:"langle", ttype:LEFTBRACKET},
+{input:":)", tag:"mo", output:"\u232A", tex:"rangle", ttype:RIGHTBRACKET},
+{input:"<<", tag:"mo", output:"\u2329", tex:null, ttype:LEFTBRACKET},
+{input:">>", tag:"mo", output:"\u232A", tex:null, ttype:RIGHTBRACKET},
+{input:"{:", tag:"mo", output:"{:", tex:null, ttype:LEFTBRACKET, invisible:true},
+{input:":}", tag:"mo", output:":}", tex:null, ttype:RIGHTBRACKET, invisible:true},
+
+//miscellaneous symbols
+{input:"int",  tag:"mo", output:"\u222B", tex:null, ttype:CONST},
+{input:"dx",   tag:"mi", output:"{:d x:}", tex:null, ttype:DEFINITION},
+{input:"dy",   tag:"mi", output:"{:d y:}", tex:null, ttype:DEFINITION},
+{input:"dz",   tag:"mi", output:"{:d z:}", tex:null, ttype:DEFINITION},
+{input:"dt",   tag:"mi", output:"{:d t:}", tex:null, ttype:DEFINITION},
+{input:"oint", tag:"mo", output:"\u222E", tex:null, ttype:CONST},
+{input:"del",  tag:"mo", output:"\u2202", tex:"partial", ttype:CONST},
+{input:"grad", tag:"mo", output:"\u2207", tex:"nabla", ttype:CONST},
+{input:"+-",   tag:"mo", output:"\u00B1", tex:"pm", ttype:CONST},
+{input:"O/",   tag:"mo", output:"\u2205", tex:"emptyset", ttype:CONST},
+{input:"oo",   tag:"mo", output:"\u221E", tex:"infty", ttype:CONST},
+{input:"aleph", tag:"mo", output:"\u2135", tex:null, ttype:CONST},
+{input:"...",  tag:"mo", output:"...",    tex:"ldots", ttype:CONST},
+{input:":.",  tag:"mo", output:"\u2234",  tex:"therefore", ttype:CONST},
+{input:"/_",  tag:"mo", output:"\u2220",  tex:"angle", ttype:CONST},
+{input:"\\ ",  tag:"mo", output:"\u00A0", tex:null, ttype:CONST},
+{input:"quad", tag:"mo", output:"\u00A0\u00A0", tex:null, ttype:CONST},
+{input:"qquad", tag:"mo", output:"\u00A0\u00A0\u00A0\u00A0", tex:null, ttype:CONST},
+{input:"cdots", tag:"mo", output:"\u22EF", tex:null, ttype:CONST},
+{input:"vdots", tag:"mo", output:"\u22EE", tex:null, ttype:CONST},
+{input:"ddots", tag:"mo", output:"\u22F1", tex:null, ttype:CONST},
+{input:"diamond", tag:"mo", output:"\u22C4", tex:null, ttype:CONST},
+{input:"square", tag:"mo", output:"\u25A1", tex:null, ttype:CONST},
+{input:"|__", tag:"mo", output:"\u230A",  tex:"lfloor", ttype:CONST},
+{input:"__|", tag:"mo", output:"\u230B",  tex:"rfloor", ttype:CONST},
+{input:"|~", tag:"mo", output:"\u2308",  tex:"lceiling", ttype:CONST},
+{input:"~|", tag:"mo", output:"\u2309",  tex:"rceiling", ttype:CONST},
+{input:"CC",  tag:"mo", output:"\u2102", tex:null, ttype:CONST},
+{input:"NN",  tag:"mo", output:"\u2115", tex:null, ttype:CONST},
+{input:"QQ",  tag:"mo", output:"\u211A", tex:null, ttype:CONST},
+{input:"RR",  tag:"mo", output:"\u211D", tex:null, ttype:CONST},
+{input:"ZZ",  tag:"mo", output:"\u2124", tex:null, ttype:CONST},
+{input:"f",   tag:"mi", output:"f",      tex:null, ttype:UNARY, func:true},
+{input:"g",   tag:"mi", output:"g",      tex:null, ttype:UNARY, func:true},
+
+//standard functions
+{input:"lim",  tag:"mo", output:"lim", tex:null, ttype:UNDEROVER},
+{input:"Lim",  tag:"mo", output:"Lim", tex:null, ttype:UNDEROVER},
+{input:"sin",  tag:"mo", output:"sin", tex:null, ttype:UNARY, func:true},
+{input:"cos",  tag:"mo", output:"cos", tex:null, ttype:UNARY, func:true},
+{input:"tan",  tag:"mo", output:"tan", tex:null, ttype:UNARY, func:true},
+{input:"sinh", tag:"mo", output:"sinh", tex:null, ttype:UNARY, func:true},
+{input:"cosh", tag:"mo", output:"cosh", tex:null, ttype:UNARY, func:true},
+{input:"tanh", tag:"mo", output:"tanh", tex:null, ttype:UNARY, func:true},
+{input:"cot",  tag:"mo", output:"cot", tex:null, ttype:UNARY, func:true},
+{input:"sec",  tag:"mo", output:"sec", tex:null, ttype:UNARY, func:true},
+{input:"csc",  tag:"mo", output:"csc", tex:null, ttype:UNARY, func:true},
+{input:"log",  tag:"mo", output:"log", tex:null, ttype:UNARY, func:true},
+{input:"ln",   tag:"mo", output:"ln",  tex:null, ttype:UNARY, func:true},
+{input:"det",  tag:"mo", output:"det", tex:null, ttype:UNARY, func:true},
+{input:"dim",  tag:"mo", output:"dim", tex:null, ttype:CONST},
+{input:"mod",  tag:"mo", output:"mod", tex:null, ttype:CONST},
+{input:"gcd",  tag:"mo", output:"gcd", tex:null, ttype:UNARY, func:true},
+{input:"lcm",  tag:"mo", output:"lcm", tex:null, ttype:UNARY, func:true},
+{input:"lub",  tag:"mo", output:"lub", tex:null, ttype:CONST},
+{input:"glb",  tag:"mo", output:"glb", tex:null, ttype:CONST},
+{input:"min",  tag:"mo", output:"min", tex:null, ttype:UNDEROVER},
+{input:"max",  tag:"mo", output:"max", tex:null, ttype:UNDEROVER},
+
+//arrows
+{input:"uarr", tag:"mo", output:"\u2191", tex:"uparrow", ttype:CONST},
+{input:"darr", tag:"mo", output:"\u2193", tex:"downarrow", ttype:CONST},
+{input:"rarr", tag:"mo", output:"\u2192", tex:"rightarrow", ttype:CONST},
+{input:"->",   tag:"mo", output:"\u2192", tex:"to", ttype:CONST},
+{input:"|->",  tag:"mo", output:"\u21A6", tex:"mapsto", ttype:CONST},
+{input:"larr", tag:"mo", output:"\u2190", tex:"leftarrow", ttype:CONST},
+{input:"harr", tag:"mo", output:"\u2194", tex:"leftrightarrow", ttype:CONST},
+{input:"rArr", tag:"mo", output:"\u21D2", tex:"Rightarrow", ttype:CONST},
+{input:"lArr", tag:"mo", output:"\u21D0", tex:"Leftarrow", ttype:CONST},
+{input:"hArr", tag:"mo", output:"\u21D4", tex:"Leftrightarrow", ttype:CONST},
+
+//commands with argument
+AMsqrt, AMroot, AMfrac, AMdiv, AMover, AMsub, AMsup,
+{input:"hat", tag:"mover", output:"\u005E", tex:null, ttype:UNARY, acc:true},
+{input:"bar", tag:"mover", output:"\u00AF", tex:"overline", ttype:UNARY, acc:true},
+{input:"vec", tag:"mover", output:"\u2192", tex:null, ttype:UNARY, acc:true},
+{input:"dot", tag:"mover", output:".",      tex:null, ttype:UNARY, acc:true},
+{input:"ddot", tag:"mover", output:"..",    tex:null, ttype:UNARY, acc:true},
+{input:"ul", tag:"munder", output:"\u0332", tex:"underline", ttype:UNARY, acc:true},
+AMtext, AMmbox, AMquote,
+{input:"bb", tag:"mstyle", atname:"fontweight", atval:"bold", output:"bb", tex:null, ttype:UNARY},
+{input:"mathbf", tag:"mstyle", atname:"fontweight", atval:"bold", output:"mathbf", tex:null, ttype:UNARY},
+{input:"sf", tag:"mstyle", atname:"fontfamily", atval:"sans-serif", output:"sf", tex:null, ttype:UNARY},
+{input:"mathsf", tag:"mstyle", atname:"fontfamily", atval:"sans-serif", output:"mathsf", tex:null, ttype:UNARY},
+{input:"bbb", tag:"mstyle", atname:"mathvariant", atval:"double-struck", output:"bbb", tex:null, ttype:UNARY, codes:AMbbb},
+{input:"mathbb", tag:"mstyle", atname:"mathvariant", atval:"double-struck", output:"mathbb", tex:null, ttype:UNARY, codes:AMbbb},
+{input:"cc",  tag:"mstyle", atname:"mathvariant", atval:"script", output:"cc", tex:null, ttype:UNARY, codes:AMcal},
+{input:"mathcal", tag:"mstyle", atname:"mathvariant", atval:"script", output:"mathcal", tex:null, ttype:UNARY, codes:AMcal},
+{input:"tt",  tag:"mstyle", atname:"fontfamily", atval:"monospace", output:"tt", tex:null, ttype:UNARY},
+{input:"mathtt", tag:"mstyle", atname:"fontfamily", atval:"monospace", output:"mathtt", tex:null, ttype:UNARY},
+{input:"fr",  tag:"mstyle", atname:"mathvariant", atval:"fraktur", output:"fr", tex:null, ttype:UNARY, codes:AMfrk},
+{input:"mathfrak",  tag:"mstyle", atname:"mathvariant", atval:"fraktur", output:"mathfrak", tex:null, ttype:UNARY, codes:AMfrk}
+];
+
+function compareNames(s1,s2) {
+  if (s1.input > s2.input) return 1
+  else return -1;
+}
+
+var AMnames = []; //list of input symbols
+
+function AMinitSymbols() {
+  var texsymbols = [], i;
+  for (i=0; i<AMsymbols.length; i++)
+    if (AMsymbols[i].tex)
+      texsymbols[texsymbols.length] = {input:AMsymbols[i].tex,
+        tag:AMsymbols[i].tag, output:AMsymbols[i].output, ttype:AMsymbols[i].ttype};
+  AMsymbols = AMsymbols.concat(texsymbols);
+  AMsymbols.sort(compareNames);
+  for (i=0; i<AMsymbols.length; i++) AMnames[i] = AMsymbols[i].input;
+}
+
+var AMmathml = "http://www.w3.org/1998/Math/MathML";
+
+function AMcreateElementMathML(t) {
+  if (isIE) return document.createElement("m:"+t);
+  else return document.createElementNS(AMmathml,t);
+}
+
+function AMcreateMmlNode(t,frag) {
+//  var node = AMcreateElementMathML(name);
+  if (isIE) var node = document.createElement("m:"+t);
+  else var node = document.createElementNS(AMmathml,t);
+  node.appendChild(frag);
+  return node;
+}
+
+function newcommand(oldstr,newstr) {
+  AMsymbols = AMsymbols.concat([{input:oldstr, tag:"mo", output:newstr,
+                                 tex:null, ttype:DEFINITION}]);
+}
+
+function AMremoveCharsAndBlanks(str,n) {
+//remove n characters and any following blanks
+  var st;
+  if (str.charAt(n)=="\\" && str.charAt(n+1)!="\\" && str.charAt(n+1)!=" ")
+    st = str.slice(n+1);
+  else st = str.slice(n);
+  for (var i=0; i<st.length && st.charCodeAt(i)<=32; i=i+1);
+  return st.slice(i);
+}
+
+function AMposition(arr, str, n) {
+// return position >=n where str appears or would be inserted
+// assumes arr is sorted
+  if (n==0) {
+    var h,m;
+    n = -1;
+    h = arr.length;
+    while (n+1<h) {
+      m = (n+h) >> 1;
+      if (arr[m]<str) n = m; else h = m;
+    }
+    return h;
+  } else
+    for (var i=n; i<arr.length && arr[i]<str; i++);
+  return i; // i=arr.length || arr[i]>=str
+}
+
+function AMgetSymbol(str) {
+//return maximal initial substring of str that appears in names
+//return null if there is none
+  var k = 0; //new pos
+  var j = 0; //old pos
+  var mk; //match pos
+  var st;
+  var tagst;
+  var match = "";
+  var more = true;
+  for (var i=1; i<=str.length && more; i++) {
+    st = str.slice(0,i); //initial substring of length i
+    j = k;
+    k = AMposition(AMnames, st, j);
+    if (k<AMnames.length && str.slice(0,AMnames[k].length)==AMnames[k]){
+      match = AMnames[k];
+      mk = k;
+      i = match.length;
+    }
+    more = k<AMnames.length && str.slice(0,AMnames[k].length)>=AMnames[k];
+  }
+  AMpreviousSymbol=AMcurrentSymbol;
+  if (match!=""){
+    AMcurrentSymbol=AMsymbols[mk].ttype;
+    return AMsymbols[mk];
+  }
+// if str[0] is a digit or - return maxsubstring of digits.digits
+  AMcurrentSymbol=CONST;
+  k = 1;
+  st = str.slice(0,1);
+  var integ = true;
+  while ("0"<=st && st<="9" && k<=str.length) {
+    st = str.slice(k,k+1);
+    k++;
+  }
+  if (st == decimalsign) {
+    st = str.slice(k,k+1);
+    if ("0"<=st && st<="9") {
+      integ = false;
+      k++;
+      while ("0"<=st && st<="9" && k<=str.length) {
+        st = str.slice(k,k+1);
+        k++;
+      }
+    }
+  }
+  if ((integ && k>1) || k>2) {
+    st = str.slice(0,k-1);
+    tagst = "mn";
+  } else {
+    k = 2;
+    st = str.slice(0,1); //take 1 character
+    tagst = (("A">st || st>"Z") && ("a">st || st>"z")?"mo":"mi");
+  }
+  if (st=="-" && AMpreviousSymbol==INFIX) {
+    AMcurrentSymbol = INFIX;  //trick "/" into recognizing "-" on second parse
+    return {input:st, tag:tagst, output:st, ttype:UNARY, func:true};
+  }
+  return {input:st, tag:tagst, output:st, ttype:CONST};
+}
+
+function AMremoveBrackets(node) {
+  var st;
+  if (node.nodeName=="mrow") {
+    st = node.firstChild.firstChild.nodeValue;
+    if (st=="(" || st=="[" || st=="{") node.removeChild(node.firstChild);
+  }
+  if (node.nodeName=="mrow") {
+    st = node.lastChild.firstChild.nodeValue;
+    if (st==")" || st=="]" || st=="}") node.removeChild(node.lastChild);
+  }
+}
+
+/*Parsing ASCII math expressions with the following grammar
+v ::= [A-Za-z] | greek letters | numbers | other constant symbols
+u ::= sqrt | text | bb | other unary symbols for font commands
+b ::= frac | root | stackrel         binary symbols
+l ::= ( | [ | { | (: | {:            left brackets
+r ::= ) | ] | } | :) | :}            right brackets
+S ::= v | lEr | uS | bSS             Simple expression
+I ::= S_S | S^S | S_S^S | S          Intermediate expression
+E ::= IE | I/I                       Expression
+Each terminal symbol is translated into a corresponding mathml node.*/
+
+var AMnestingDepth,AMpreviousSymbol,AMcurrentSymbol;
+
+function AMparseSexpr(str) { //parses str and returns [node,tailstr]
+  var symbol, node, result, i, st,// rightvert = false,
+    newFrag = document.createDocumentFragment();
+  str = AMremoveCharsAndBlanks(str,0);
+  symbol = AMgetSymbol(str);             //either a token or a bracket or empty
+  if (symbol == null || symbol.ttype == RIGHTBRACKET && AMnestingDepth > 0) {
+    return [null,str];
+  }
+  if (symbol.ttype == DEFINITION) {
+    str = symbol.output+AMremoveCharsAndBlanks(str,symbol.input.length);
+    symbol = AMgetSymbol(str);
+  }
+  switch (symbol.ttype) {
+  case UNDEROVER:
+  case CONST:
+    str = AMremoveCharsAndBlanks(str,symbol.input.length);
+    return [AMcreateMmlNode(symbol.tag,        //its a constant
+                             document.createTextNode(symbol.output)),str];
+  case LEFTBRACKET:   //read (expr+)
+    AMnestingDepth++;
+    str = AMremoveCharsAndBlanks(str,symbol.input.length);
+    result = AMparseExpr(str,true);
+    AMnestingDepth--;
+    if (typeof symbol.invisible == "boolean" && symbol.invisible)
+      node = AMcreateMmlNode("mrow",result[0]);
+    else {
+      node = AMcreateMmlNode("mo",document.createTextNode(symbol.output));
+      node = AMcreateMmlNode("mrow",node);
+      node.appendChild(result[0]);
+    }
+    return [node,result[1]];
+  case TEXT:
+      if (symbol!=AMquote) str = AMremoveCharsAndBlanks(str,symbol.input.length);
+      if (str.charAt(0)=="{") i=str.indexOf("}");
+      else if (str.charAt(0)=="(") i=str.indexOf(")");
+      else if (str.charAt(0)=="[") i=str.indexOf("]");
+      else if (symbol==AMquote) i=str.slice(1).indexOf("\"")+1;
+      else i = 0;
+      if (i==-1) i = str.length;
+      st = str.slice(1,i);
+      if (st.charAt(0) == " ") {
+        node = AMcreateElementMathML("mspace");
+        node.setAttribute("width","1ex");
+        newFrag.appendChild(node);
+      }
+      newFrag.appendChild(
+        AMcreateMmlNode(symbol.tag,document.createTextNode(st)));
+      if (st.charAt(st.length-1) == " ") {
+        node = AMcreateElementMathML("mspace");
+        node.setAttribute("width","1ex");
+        newFrag.appendChild(node);
+      }
+      str = AMremoveCharsAndBlanks(str,i+1);
+      return [AMcreateMmlNode("mrow",newFrag),str];
+  case UNARY:
+      str = AMremoveCharsAndBlanks(str,symbol.input.length);
+      result = AMparseSexpr(str);
+      if (result[0]==null) return [AMcreateMmlNode(symbol.tag,
+                             document.createTextNode(symbol.output)),str];
+      if (typeof symbol.func == "boolean" && symbol.func) { // functions hack
+        st = str.charAt(0);
+        if (st=="^" || st=="_" || st=="/" || st=="|" || st==",") {
+          return [AMcreateMmlNode(symbol.tag,
+                    document.createTextNode(symbol.output)),str];
+        } else {
+          node = AMcreateMmlNode("mrow",
+           AMcreateMmlNode(symbol.tag,document.createTextNode(symbol.output)));
+          node.appendChild(result[0]);
+          return [node,result[1]];
+        }
+      }
+      AMremoveBrackets(result[0]);
+      if (symbol.input == "sqrt") {           // sqrt
+        return [AMcreateMmlNode(symbol.tag,result[0]),result[1]];
+      } else if (typeof symbol.acc == "boolean" && symbol.acc) {   // accent
+        node = AMcreateMmlNode(symbol.tag,result[0]);
+        node.appendChild(AMcreateMmlNode("mo",document.createTextNode(symbol.output)));
+        return [node,result[1]];
+      } else {                        // font change command
+        if (!isIE && typeof symbol.codes != "undefined") {
+          for (i=0; i<result[0].childNodes.length; i++)
+            if (result[0].childNodes[i].nodeName=="mi" || result[0].nodeName=="mi") {
+              st = (result[0].nodeName=="mi"?result[0].firstChild.nodeValue:
+                              result[0].childNodes[i].firstChild.nodeValue);
+              var newst = [];
+              for (var j=0; j<st.length; j++)
+                if (st.charCodeAt(j)>64 && st.charCodeAt(j)<91) newst = newst +
+                  String.fromCharCode(symbol.codes[st.charCodeAt(j)-65]);
+                else newst = newst + st.charAt(j);
+              if (result[0].nodeName=="mi")
+                result[0]=AMcreateElementMathML("mo").
+                          appendChild(document.createTextNode(newst));
+              else result[0].replaceChild(AMcreateElementMathML("mo").
+          appendChild(document.createTextNode(newst)),result[0].childNodes[i]);
+            }
+        }
+        node = AMcreateMmlNode(symbol.tag,result[0]);
+        node.setAttribute(symbol.atname,symbol.atval);
+        return [node,result[1]];
+      }
+  case BINARY:
+    str = AMremoveCharsAndBlanks(str,symbol.input.length);
+    result = AMparseSexpr(str);
+    if (result[0]==null) return [AMcreateMmlNode("mo",
+                           document.createTextNode(symbol.input)),str];
+    AMremoveBrackets(result[0]);
+    var result2 = AMparseSexpr(result[1]);
+    if (result2[0]==null) return [AMcreateMmlNode("mo",
+                           document.createTextNode(symbol.input)),str];
+    AMremoveBrackets(result2[0]);
+    if (symbol.input=="root" || symbol.input=="stackrel")
+      newFrag.appendChild(result2[0]);
+    newFrag.appendChild(result[0]);
+    if (symbol.input=="frac") newFrag.appendChild(result2[0]);
+    return [AMcreateMmlNode(symbol.tag,newFrag),result2[1]];
+  case INFIX:
+    str = AMremoveCharsAndBlanks(str,symbol.input.length);
+    return [AMcreateMmlNode("mo",document.createTextNode(symbol.output)),str];
+  case SPACE:
+    str = AMremoveCharsAndBlanks(str,symbol.input.length);
+    node = AMcreateElementMathML("mspace");
+    node.setAttribute("width","1ex");
+    newFrag.appendChild(node);
+    newFrag.appendChild(
+      AMcreateMmlNode(symbol.tag,document.createTextNode(symbol.output)));
+    node = AMcreateElementMathML("mspace");
+    node.setAttribute("width","1ex");
+    newFrag.appendChild(node);
+    return [AMcreateMmlNode("mrow",newFrag),str];
+  case LEFTRIGHT:
+//    if (rightvert) return [null,str]; else rightvert = true;
+    AMnestingDepth++;
+    str = AMremoveCharsAndBlanks(str,symbol.input.length);
+    result = AMparseExpr(str,false);
+    AMnestingDepth--;
+    var st = "";
+    if (result[0].lastChild!=null)
+      st = result[0].lastChild.firstChild.nodeValue;
+    if (st == "|") { // its an absolute value subterm
+      node = AMcreateMmlNode("mo",document.createTextNode(symbol.output));
+      node = AMcreateMmlNode("mrow",node);
+      node.appendChild(result[0]);
+      return [node,result[1]];
+    } else { // the "|" is a \mid
+      node = AMcreateMmlNode("mo",document.createTextNode(symbol.output));
+      node = AMcreateMmlNode("mrow",node);
+      return [node,str];
+    }
+  default:
+//alert("default");
+    str = AMremoveCharsAndBlanks(str,symbol.input.length);
+    return [AMcreateMmlNode(symbol.tag,        //its a constant
+                             document.createTextNode(symbol.output)),str];
+  }
+}
+
+function AMparseIexpr(str) {
+  var symbol, sym1, sym2, node, result, underover;
+  str = AMremoveCharsAndBlanks(str,0);
+  sym1 = AMgetSymbol(str);
+  result = AMparseSexpr(str);
+  node = result[0];
+  str = result[1];
+  symbol = AMgetSymbol(str);
+  if (symbol.ttype == INFIX && symbol.input != "/") {
+    str = AMremoveCharsAndBlanks(str,symbol.input.length);
+//    if (symbol.input == "/") result = AMparseIexpr(str); else ...
+    result = AMparseSexpr(str);
+    if (result[0] == null) // show box in place of missing argument
+      result[0] = AMcreateMmlNode("mo",document.createTextNode("\u25A1"));
+    else AMremoveBrackets(result[0]);
+    str = result[1];
+//    if (symbol.input == "/") AMremoveBrackets(node);
+    if (symbol.input == "_") {
+      sym2 = AMgetSymbol(str);
+      underover = (sym1.ttype == UNDEROVER);
+      if (sym2.input == "^") {
+        str = AMremoveCharsAndBlanks(str,sym2.input.length);
+        var res2 = AMparseSexpr(str);
+        AMremoveBrackets(res2[0]);
+        str = res2[1];
+        node = AMcreateMmlNode((underover?"munderover":"msubsup"),node);
+        node.appendChild(result[0]);
+        node.appendChild(res2[0]);
+        node = AMcreateMmlNode("mrow",node); // so sum does not stretch
+      } else {
+        node = AMcreateMmlNode((underover?"munder":"msub"),node);
+        node.appendChild(result[0]);
+      }
+    } else {
+      node = AMcreateMmlNode(symbol.tag,node);
+      node.appendChild(result[0]);
+    }
+  }
+  return [node,str];
+}
+
+function AMparseExpr(str,rightbracket) {
+  var symbol, node, result, i, nodeList = [],
+  newFrag = document.createDocumentFragment();
+  do {
+    str = AMremoveCharsAndBlanks(str,0);
+    result = AMparseIexpr(str);
+    node = result[0];
+    str = result[1];
+    symbol = AMgetSymbol(str);
+    if (symbol.ttype == INFIX && symbol.input == "/") {
+      str = AMremoveCharsAndBlanks(str,symbol.input.length);
+      result = AMparseIexpr(str);
+      if (result[0] == null) // show box in place of missing argument
+        result[0] = AMcreateMmlNode("mo",document.createTextNode("\u25A1"));
+      else AMremoveBrackets(result[0]);
+      str = result[1];
+      AMremoveBrackets(node);
+      node = AMcreateMmlNode(symbol.tag,node);
+      node.appendChild(result[0]);
+      newFrag.appendChild(node);
+      symbol = AMgetSymbol(str);
+    }
+    else if (node!=undefined) newFrag.appendChild(node);
+  } while ((symbol.ttype != RIGHTBRACKET &&
+           (symbol.ttype != LEFTRIGHT || rightbracket)
+           || AMnestingDepth == 0) && symbol!=null && symbol.output!="");
+  if (symbol.ttype == RIGHTBRACKET || symbol.ttype == LEFTRIGHT) {
+//    if (AMnestingDepth > 0) AMnestingDepth--;
+    var len = newFrag.childNodes.length;
+    if (len>0 && newFrag.childNodes[len-1].nodeName == "mrow" && len>1 &&
+      newFrag.childNodes[len-2].nodeName == "mo" &&
+      newFrag.childNodes[len-2].firstChild.nodeValue == ",") { //matrix
+      var right = newFrag.childNodes[len-1].lastChild.firstChild.nodeValue;
+      if (right==")" || right=="]") {
+        var left = newFrag.childNodes[len-1].firstChild.firstChild.nodeValue;
+        if (left=="(" && right==")" && symbol.output != "}" ||
+            left=="[" && right=="]") {
+        var pos = []; // positions of commas
+        var matrix = true;
+        var m = newFrag.childNodes.length;
+        for (i=0; matrix && i<m; i=i+2) {
+          pos[i] = [];
+          node = newFrag.childNodes[i];
+          if (matrix) matrix = node.nodeName=="mrow" &&
+            (i==m-1 || node.nextSibling.nodeName=="mo" &&
+            node.nextSibling.firstChild.nodeValue==",")&&
+            node.firstChild.firstChild.nodeValue==left &&
+            node.lastChild.firstChild.nodeValue==right;
+          if (matrix)
+            for (var j=0; j<node.childNodes.length; j++)
+              if (node.childNodes[j].firstChild.nodeValue==",")
+                pos[i][pos[i].length]=j;
+          if (matrix && i>1) matrix = pos[i].length == pos[i-2].length;
+        }
+        if (matrix) {
+          var row, frag, n, k, table = document.createDocumentFragment();
+          for (i=0; i<m; i=i+2) {
+            row = document.createDocumentFragment();
+            frag = document.createDocumentFragment();
+            node = newFrag.firstChild; // <mrow>(-,-,...,-,-)</mrow>
+            n = node.childNodes.length;
+            k = 0;
+            node.removeChild(node.firstChild); //remove (
+            for (j=1; j<n-1; j++) {
+              if (typeof pos[i][k] != "undefined" && j==pos[i][k]){
+                node.removeChild(node.firstChild); //remove ,
+                row.appendChild(AMcreateMmlNode("mtd",frag));
+                k++;
+              } else frag.appendChild(node.firstChild);
+            }
+            row.appendChild(AMcreateMmlNode("mtd",frag));
+            if (newFrag.childNodes.length>2) {
+              newFrag.removeChild(newFrag.firstChild); //remove <mrow>)</mrow>
+              newFrag.removeChild(newFrag.firstChild); //remove <mo>,</mo>
+            }
+            table.appendChild(AMcreateMmlNode("mtr",row));
+          }
+          node = AMcreateMmlNode("mtable",table);
+          if (typeof symbol.invisible == "boolean" && symbol.invisible) node.setAttribute("columnalign","left");
+          newFrag.replaceChild(node,newFrag.firstChild);
+        }
+       }
+      }
+    }
+    str = AMremoveCharsAndBlanks(str,symbol.input.length);
+    if (typeof symbol.invisible != "boolean" || !symbol.invisible) {
+      node = AMcreateMmlNode("mo",document.createTextNode(symbol.output));
+      newFrag.appendChild(node);
+    }
+  }
+  return [newFrag,str];
+}
+
+function AMparseMath(str) {
+  var result, node = AMcreateElementMathML("mstyle");
+  if (mathcolor != "") node.setAttribute("mathcolor",mathcolor);
+  if (displaystyle) node.setAttribute("displaystyle","true");
+  if (mathfontfamily != "") node.setAttribute("fontfamily",mathfontfamily);
+  AMnestingDepth = 0;
+  node.appendChild(AMparseExpr(str.replace(/^\s+/g,""),false)[0]);
+  node = AMcreateMmlNode("math",node);
+  if (showasciiformulaonhover)                      //fixed by djhsu so newline
+    node.setAttribute("title",str.replace(/\s+/g," "));//does not show in Gecko
+  if (mathfontfamily != "" && (isIE || mathfontfamily != "serif")) {
+    var fnode = AMcreateElementXHTML("font");
+    fnode.setAttribute("face",mathfontfamily);
+    fnode.appendChild(node);
+    return fnode;
+  }
+  return node;
+}
+
+function AMstrarr2docFrag(arr, linebreaks) {
+  var newFrag=document.createDocumentFragment();
+  var expr = false;
+  for (var i=0; i<arr.length; i++) {
+    if (expr) newFrag.appendChild(AMparseMath(arr[i]));
+    else {
+      var arri = (linebreaks ? arr[i].split("\n\n") : [arr[i]]);
+      newFrag.appendChild(AMcreateElementXHTML("span").
+      appendChild(document.createTextNode(arri[0])));
+      for (var j=1; j<arri.length; j++) {
+        newFrag.appendChild(AMcreateElementXHTML("p"));
+        newFrag.appendChild(AMcreateElementXHTML("span").
+        appendChild(document.createTextNode(arri[j])));
+      }
+    }
+    expr = !expr;
+  }
+  return newFrag;
+}
+
+function AMprocessNodeR(n, linebreaks) {
+  var mtch, str, arr, frg, i;
+  if (n.childNodes.length == 0) {
+   if ((n.nodeType!=8 || linebreaks) &&
+    n.parentNode.nodeName!="form" && n.parentNode.nodeName!="FORM" &&
+    n.parentNode.nodeName!="textarea" && n.parentNode.nodeName!="TEXTAREA" &&
+    n.parentNode.nodeName!="pre" && n.parentNode.nodeName!="PRE") {
+    str = n.nodeValue;
+    if (!(str == null)) {
+      str = str.replace(/\r\n\r\n/g,"\n\n");
+      if (doubleblankmathdelimiter) {
+        str = str.replace(/\x20\x20\./g," "+AMdelimiter1+".");
+        str = str.replace(/\x20\x20,/g," "+AMdelimiter1+",");
+        str = str.replace(/\x20\x20/g," "+AMdelimiter1+" ");
+      }
+      str = str.replace(/\x20+/g," ");
+      str = str.replace(/\s*\r\n/g," ");
+      mtch = false;
+      str = str.replace(new RegExp(AMescape2, "g"),
+              function(st){mtch=true;return "AMescape2"});
+      str = str.replace(new RegExp(AMescape1, "g"),
+              function(st){mtch=true;return "AMescape1"});
+      str = str.replace(new RegExp(AMdelimiter2regexp, "g"),AMdelimiter1);
+      arr = str.split(AMdelimiter1);
+      for (i=0; i<arr.length; i++)
+        arr[i]=arr[i].replace(/AMescape2/g,AMdelimiter2).
+                      replace(/AMescape1/g,AMdelimiter1);
+      if (arr.length>1 || mtch) {
+        if (checkForMathML) {
+          checkForMathML = false;
+          var nd = AMisMathMLavailable();
+          AMnoMathML = nd != null;
+          if (AMnoMathML && notifyIfNoMathML)
+            if (alertIfNoMathML)
+              alert("To view the ASCIIMathML notation use Internet Explorer 6 +\nMathPlayer (free from www.dessci.com)\n\
+                or Firefox/Mozilla/Netscape");
+            else AMbody.insertBefore(nd,AMbody.childNodes[0]);
+        }
+        if (!AMnoMathML) {
+          frg = AMstrarr2docFrag(arr,n.nodeType==8);
+          var len = frg.childNodes.length;
+          n.parentNode.replaceChild(frg,n);
+          return len-1;
+        } else return 0;
+      }
+    }
+   } else return 0;
+  } else if (n.nodeName!="math") {
+    for (i=0; i<n.childNodes.length; i++)
+      i += AMprocessNodeR(n.childNodes[i], linebreaks);
+  }
+  return 0;
+}
+
+function AMprocessNode(n, linebreaks, spanclassAM) {
+  var frag,st;
+  if (spanclassAM!=null) {
+    frag = document.getElementsByTagName("span")
+    for (var i=0;i<frag.length;i++)
+      if (frag[i].className == "AM")
+        AMprocessNodeR(frag[i],linebreaks);
+  } else {
+    try {
+      st = n.innerHTML;
+    } catch(err) {}
+    if (st==null ||
+        st.indexOf(AMdelimiter1)!=-1 || st.indexOf(AMdelimiter2)!=-1)
+      AMprocessNodeR(n,linebreaks);
+  }
+  if (isIE) { //needed to match size and font of formula to surrounding text
+    frag = document.getElementsByTagName('math');
+    for (var i=0;i<frag.length;i++) frag[i].update()
+  }
+}
+
+var AMbody;
+var AMnoMathML = false, AMtranslated = false;
+
+function translate(spanclassAM) {
+  if (!AMtranslated) { // run this only once
+    AMtranslated = true;
+    AMinitSymbols();
+    AMbody = document.getElementsByTagName("body")[0];
+    AMprocessNode(AMbody, false, spanclassAM);
+  }
+}
+
+if (isIE) { // avoid adding MathPlayer info explicitly to each webpage
+  document.write("<object id=\"mathplayer\"\
+  classid=\"clsid:32F66A20-7614-11D4-BD11-00104BD3F987\"></object>");
+  document.write("<?import namespace=\"m\" implementation=\"#mathplayer\"?>");
+}
+
+// GO1.1 Generic onload by Brothercake
+// http://www.brothercake.com/
+//onload function (replaces the onload="translate()" in the <body> tag)
+function generic()
+{
+  translate();
+};
+//setup onload function
+if(typeof window.addEventListener != 'undefined')
+{
+  //.. gecko, safari, konqueror and standard
+  window.addEventListener('load', generic, false);
+}
+else if(typeof document.addEventListener != 'undefined')
+{
+  //.. opera 7
+  document.addEventListener('load', generic, false);
+}
+else if(typeof window.attachEvent != 'undefined')
+{
+  //.. win/ie
+  window.attachEvent('onload', generic);
+}
+//** remove this condition to degrade older browsers
+else
+{
+  //.. mac/ie5 and anything else that gets this far
+  //if there's an existing onload function
+  if(typeof window.onload == 'function')
+  {
+    //store it
+    var existing = onload;
+    //add new onload handler
+    window.onload = function()
+    {
+      //call existing onload function
+      existing();
+      //call generic onload function
+      generic();
+    };
+  }
+  else
+  {
+    //setup onload function
+    window.onload = generic;
+  }
+}
+/*]]>*/
+</script>
+</head>
+<body class="article">
+<div id="header">
+<h1>AirData Download Files Documentation</h1>
+<span id="author">Version 3.0.0, December 01, 2015</span><br>
+<div id="toc">
+  <div id="toctitle">Table of Contents</div>
+  <noscript><p><b>JavaScript must be enabled in your browser to display the table of contents.</b></p></noscript>
+<div class="toclevel1"><a href="https://aqs.epa.gov/aqsweb/airdata/FileFormats.html#_introduction">1. Introduction</a></div><div class="toclevel2"><a href="https://aqs.epa.gov/aqsweb/airdata/FileFormats.html#_monitors">1.1. Monitors</a></div><div class="toclevel2"><a href="https://aqs.epa.gov/aqsweb/airdata/FileFormats.html#_pollutant_standards">1.2. Pollutant Standards</a></div><div class="toclevel2"><a href="https://aqs.epa.gov/aqsweb/airdata/FileFormats.html#_changes_since_last_version">1.3. Changes Since Last Version</a></div><div class="toclevel1"><a href="https://aqs.epa.gov/aqsweb/airdata/FileFormats.html#_site_description_file">2. Site Description File</a></div><div class="toclevel2"><a href="https://aqs.epa.gov/aqsweb/airdata/FileFormats.html#_content">2.1. Content</a></div><div class="toclevel2"><a href="https://aqs.epa.gov/aqsweb/airdata/FileFormats.html#_format">2.2. Format</a></div><div class="toclevel1"><a href="https://aqs.epa.gov/aqsweb/airdata/FileFormats.html#_monitor_description_file">3. Monitor Description File</a></div><div class="toclevel2"><a href="https://aqs.epa.gov/aqsweb/airdata/FileFormats.html#_content_2">3.1. Content</a></div><div class="toclevel2"><a href="https://aqs.epa.gov/aqsweb/airdata/FileFormats.html#_format_2">3.2. Format</a></div><div class="toclevel1"><a href="https://aqs.epa.gov/aqsweb/airdata/FileFormats.html#_annual_summary_files">4. Annual Summary Files</a></div><div class="toclevel2"><a href="https://aqs.epa.gov/aqsweb/airdata/FileFormats.html#_content_3">4.1. Content</a></div><div class="toclevel2"><a href="https://aqs.epa.gov/aqsweb/airdata/FileFormats.html#_format_3">4.2. Format</a></div><div class="toclevel1"><a href="https://aqs.epa.gov/aqsweb/airdata/FileFormats.html#_daily_summary_files">5. Daily Summary Files</a></div><div class="toclevel2"><a href="https://aqs.epa.gov/aqsweb/airdata/FileFormats.html#_content_4">5.1. Content</a></div><div class="toclevel2"><a href="https://aqs.epa.gov/aqsweb/airdata/FileFormats.html#_format_4">5.2. Format</a></div><div class="toclevel1"><a href="https://aqs.epa.gov/aqsweb/airdata/FileFormats.html#_hourly_data_files">6. Hourly Data Files</a></div><div class="toclevel2"><a href="https://aqs.epa.gov/aqsweb/airdata/FileFormats.html#_content_5">6.1. Content</a></div><div class="toclevel2"><a href="https://aqs.epa.gov/aqsweb/airdata/FileFormats.html#_format_5">6.2. Format</a></div><div class="toclevel1"><a href="https://aqs.epa.gov/aqsweb/airdata/FileFormats.html#_8_hour_average_files">7. 8-Hour Average Files</a></div><div class="toclevel2"><a href="https://aqs.epa.gov/aqsweb/airdata/FileFormats.html#_content_6">7.1. Content</a></div><div class="toclevel2"><a href="https://aqs.epa.gov/aqsweb/airdata/FileFormats.html#_format_6">7.2. Format</a></div><div class="toclevel1"><a href="https://aqs.epa.gov/aqsweb/airdata/FileFormats.html#_blanks_data_files">8. Blanks Data Files</a></div><div class="toclevel2"><a href="https://aqs.epa.gov/aqsweb/airdata/FileFormats.html#_content_7">8.1. Content</a></div><div class="toclevel2"><a href="https://aqs.epa.gov/aqsweb/airdata/FileFormats.html#_format_7">8.2. Format</a></div></div>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="_introduction">1. Introduction</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>This document describes the contents of the pre-generated files that can be downloaded from <a href="http://www3.epa.gov/airquality/airdata/ad_data.html">http://www3.epa.gov/airquality/airdata/ad_data.html</a>.</p></div>
+<div class="paragraph"><p>The file download page contains seven types of files</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+Site Descriptions
+</p>
+</li>
+<li>
+<p>
+Monitor Descriptions
+</p>
+</li>
+<li>
+<p>
+Annual Summary Data
+</p>
+</li>
+<li>
+<p>
+Daily and Daily Summary Data
+</p>
+</li>
+<li>
+<p>
+Hourly Data
+</p>
+</li>
+<li>
+<p>
+8-Hour Average Data
+</p>
+</li>
+<li>
+<p>
+Blanks Data
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>The contents and formats of these files will be described in turn.</p></div>
+<div class="paragraph"><p>All of this data comes from EPA’s Air Quality System (AQS).  Data collection agencies report their data to EPA via this system and it calculates several types of aggregate (summary) data for EPA internal use.  This includes daily and annual summaries, but not monthly summaries, as these are not routinely needed by EPA.</p></div>
+<div class="paragraph"><p>All files are comma separated variable (CSV) format that are compressed to save space.  Each type of file has different content (columns) that are described in this document.</p></div>
+<div class="paragraph"><p>There are two concepts about how EPA stores data that are useful in understanding the data files: monitors and pollutant standards.  These are described in the sections below.</p></div>
+<div class="sect2">
+<h3 id="_monitors">1.1. Monitors</h3>
+<div class="paragraph"><p>For the purposes of AQS, a monitor does not refer to a specific piece of equipment. Instead, it reflects that a given pollutant (or other parameter) is being measured at a given site.</p></div>
+<div class="ulist"><div class="title">Identified by:</div><ul>
+<li>
+<p>
+The site (state + county + site number) where the monitor is located AND
+</p>
+</li>
+<li>
+<p>
+The pollutant code AND
+</p>
+</li>
+<li>
+<p>
+POC – Parameter Occurrence Code. Used to uniquely identify a monitor if there is more than one device measuring the same pollutant at the same site.
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>For example monitor IDs are usually written in the following way:</p></div>
+<div class="exampleblock">
+<div class="content">
+<div class="paragraph"><p><code>SS-CCC-NNNN-PPPPP-Q</code></p></div>
+</div></div>
+<div class="paragraph"><p>where <code>SS</code> is the State FIPS code, <code>CCC</code> is the County FIPS code, and <code>NNNN</code> is the Site Number within the county (leading zeroes are always included for these fields), <code>PPPPP</code> is the AQS 5-digit parameter code, and <code>Q</code> is the POC.  For example:</p></div>
+<div class="exampleblock">
+<div class="content">
+<div class="paragraph"><p><code>01-089-0014-44201-2</code></p></div>
+</div></div>
+<div class="paragraph"><p>is Alabama, Madison County, Site Number 14, ozone monitor, POC 2.</p></div>
+</div>
+<div class="sect2">
+<h3 id="_pollutant_standards">1.2. Pollutant Standards</h3>
+<div class="paragraph"><p>An important concept to understand in interpreting summary data is that of a "pollutant standard".  The national ambient air quality standards (NAAQS, <a href="http://www3.epa.gov/ttn/naaqs/criteria.html">http://www3.epa.gov/ttn/naaqs/criteria.html</a>) all have an averaging time and a form.  Furthermore, each pollutant may have several applicable standards based on the date of issuance, the duration of the sample, and a primary or secondary standard.</p></div>
+<div class="paragraph"><p>When comparing data to a NAAQS, EPA must aggregate the data according to the rules of the applicable pollutant standard.  In order to do this, we must summarize the same data various ways.  So the annual and daily summary files will (possibly) contain multiple records that have been calculated using different rules and starting metrics.  These are differentiated by the Pollutant Standard.  (The Annual Summary file also contains a Metric Used column indicating the metric reflected in the summary calculations.)</p></div>
+<div class="paragraph"><p>For an example of metric, consider ozone.  Its standard form is the "annual fourth-highest daily maximum 8-hr concentration".  So we first calculated 8-hour averages.  Then we calculate the daily maximum of these 8-hour averages.  Then, in the annual summary record, all metrics (mean, maxes, percentiles) are based on the daily maximum 8-hour average, not the individual sample values.</p></div>
+</div>
+<div class="sect2">
+<h3 id="_changes_since_last_version">1.3. Changes Since Last Version</h3>
+<div class="paragraph"><p>Changes implemented in December 2015 update.</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+Additional parameters added to VOC list; all VOC files regenerated.
+</p>
+</li>
+<li>
+<p>
+Site and Monitor description formats added.
+</p>
+</li>
+<li>
+<p>
+Minor editorial changes.
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>Changes implemented in June 2015 update (All files were regenerated to include the new columns).</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+Annual Summary - Completeness Indicator added as column #19.
+</p>
+</li>
+<li>
+<p>
+Daily Summary - Method Code added as column #21.
+</p>
+</li>
+<li>
+<p>
+Hourly Data - Method Code added as column #20.
+</p>
+</li>
+</ul></div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_site_description_file">2. Site Description File</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_content">2.1. Content</h3>
+<div class="paragraph"><p>Each unique geographic location that contains monitors is called a "site" in AQS.  Information about the geographic setting is store in the site record, which are presented here.  A unique site is identified by the combination of state code, county code, and site number (within county).  It can also be identified by the latitude and longitude.</p></div>
+</div>
+<div class="sect2">
+<h3 id="_format">2.2. Format</h3>
+<div class="paragraph"><p>The file is comma separated variables (CSV) with a header row.</p></div>
+<div class="tableblock">
+<table rules="all" width="100%" frame="border" cellspacing="0" cellpadding="4">
+<colgroup><col width="7%">
+<col width="21%">
+<col width="71%">
+</colgroup><thead>
+<tr>
+<th align="left" valign="top">Field Position </th>
+<th align="left" valign="top">Field Name </th>
+<th align="left" valign="top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">State Code</p></td>
+<td align="left" valign="top"><p class="table">The FIPS code of the state in which the monitor resides.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">2</p></td>
+<td align="left" valign="top"><p class="table">County Code</p></td>
+<td align="left" valign="top"><p class="table">The FIPS code of the county in which the monitor resides.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">3</p></td>
+<td align="left" valign="top"><p class="table">Site Number</p></td>
+<td align="left" valign="top"><p class="table">A unique number within the county identifying the site.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">4</p></td>
+<td align="left" valign="top"><p class="table">Latitude</p></td>
+<td align="left" valign="top"><p class="table">The monitoring site’s angular distance north of the equator measured in decimal degrees.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">5</p></td>
+<td align="left" valign="top"><p class="table">Longitude</p></td>
+<td align="left" valign="top"><p class="table">The monitoring site’s angular distance east of the prime meridian measured in decimal degrees.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">6</p></td>
+<td align="left" valign="top"><p class="table">Datum</p></td>
+<td align="left" valign="top"><p class="table">The Datum associated with the Latitude and Longitude measures.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">7</p></td>
+<td align="left" valign="top"><p class="table">Elevation</p></td>
+<td align="left" valign="top"><p class="table">The elevation of the ground at the site in meters above mean sea level.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">8</p></td>
+<td align="left" valign="top"><p class="table">Land Use</p></td>
+<td align="left" valign="top"><p class="table">A category describing the predominant land use within a 1/4 mile radius of the site.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">9</p></td>
+<td align="left" valign="top"><p class="table">Location Setting</p></td>
+<td align="left" valign="top"><p class="table">A description of the setting within which the monitoring site is located.  E.g., rural, urban, etc.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">10</p></td>
+<td align="left" valign="top"><p class="table">Site Established Date</p></td>
+<td align="left" valign="top"><p class="table">The date when the site began operating.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">11</p></td>
+<td align="left" valign="top"><p class="table">Site Closed Date</p></td>
+<td align="left" valign="top"><p class="table">The date on which the operating agency indicated that all operations ceased at this site.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">12</p></td>
+<td align="left" valign="top"><p class="table">Met Site State Code</p></td>
+<td align="left" valign="top"><p class="table">Where sites are required to collect meteorological data, they may be able to list a surrogate site from where the meteorological data will be used.  If a "met" site is listed this contains the AQS State Code identifier for that site.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">13</p></td>
+<td align="left" valign="top"><p class="table">Met Site County Code</p></td>
+<td align="left" valign="top"><p class="table">Where sites are required to collect meteorological data, they may be able to list a surrogate site from where the meteorological data will be used.  If a "met" site is listed this contains the AQS County Code identifier for that site.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">14</p></td>
+<td align="left" valign="top"><p class="table">Met Site Site Number</p></td>
+<td align="left" valign="top"><p class="table">Where sites are required to collect meteorological data, they may be able to list a surrogate site from where the meteorological data will be used.  If a "met" site is listed this contains the AQS Site Number for that site.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">15</p></td>
+<td align="left" valign="top"><p class="table">Met Site Type</p></td>
+<td align="left" valign="top"><p class="table">Where sites are required to collect meteorological data, they may be able to list a surrogate site from where the meteorological data will be used.  If a "met" site is listed this contains the type of surrogate site.  E.g., AQS site, National Weather Service site, etc.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">16</p></td>
+<td align="left" valign="top"><p class="table">Met Site Distance</p></td>
+<td align="left" valign="top"><p class="table">Where sites are required to collect meteorological data, they may be able to list a surrogate site from where the meteorological data will be used.  If a "met" site is listed this contains the distance from this site to the met site in meters.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">17</p></td>
+<td align="left" valign="top"><p class="table">Met Site Direction</p></td>
+<td align="left" valign="top"><p class="table">Where sites are required to collect meteorological data, they may be able to list a surrogate site from where the meteorological data will be used.  If a "met" site is listed this contains the direction from this site to the met site (true, not magnetic, direction).</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">18</p></td>
+<td align="left" valign="top"><p class="table">GMT Offset</p></td>
+<td align="left" valign="top"><p class="table">The time difference (in hours) between local standard time at this site and GMT.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">19</p></td>
+<td align="left" valign="top"><p class="table">Owning Agency</p></td>
+<td align="left" valign="top"><p class="table">The name of the agency that owns or controls the land at the site.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">20</p></td>
+<td align="left" valign="top"><p class="table">Local Site Name</p></td>
+<td align="left" valign="top"><p class="table">The name of the site (if any) given by the State, local, or tribal air pollution control agency that operates it.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">21</p></td>
+<td align="left" valign="top"><p class="table">Address</p></td>
+<td align="left" valign="top"><p class="table">The approximate street address of the monitoring site.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">22</p></td>
+<td align="left" valign="top"><p class="table">Zip Code</p></td>
+<td align="left" valign="top"><p class="table">The postal zip code in which the monitoring site resides.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">23</p></td>
+<td align="left" valign="top"><p class="table">State Name</p></td>
+<td align="left" valign="top"><p class="table">The name of the state where the monitoring site is located.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">24</p></td>
+<td align="left" valign="top"><p class="table">County Name</p></td>
+<td align="left" valign="top"><p class="table">The name of the county where the monitoring site is located.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">25</p></td>
+<td align="left" valign="top"><p class="table">City Name</p></td>
+<td align="left" valign="top"><p class="table">The name of the city where the monitoring site is located.  This represents the legal incorporated boundaries of cities and not urban areas.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">26</p></td>
+<td align="left" valign="top"><p class="table">CBSA Name</p></td>
+<td align="left" valign="top"><p class="table">The name of the core bases statistical area (metropolitan area) where the monitoring site is located.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">27</p></td>
+<td align="left" valign="top"><p class="table">Tribe Name</p></td>
+<td align="left" valign="top"><p class="table">If this site resides on tribal lands and the tribe has chosen to identify the site with tribal identifiers, this is the name of the tribe that owns the site.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">28</p></td>
+<td align="left" valign="top"><p class="table">Extraction Date</p></td>
+<td align="left" valign="top"><p class="table">The date on which this data was retrieved from the AQS Data Mart.  This does not mean that all data is valid as of this date.  Once site information is entered by the owning agency, it may not be updated as values change (e.g., location setting evolves from urban to suburban).</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_monitor_description_file">3. Monitor Description File</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_content_2">3.1. Content</h3>
+<div class="paragraph"><p>Each parameter that is measured at a site is considered a "monitor" in AQS.  (So a "monitor" does not necessarily correspond to a physical instrument/sampler.)  AQS tracks administrative information about monitors including who operates them, the methods being used, the networks they belong to, etc.  That information is available in this file.  A unique monitor is identified by the combination of state code, county code, site number (within county), parameter code, and parameter occurrence code ("POC", used to differentiate when a parameter is measured more than once at a site).</p></div>
+</div>
+<div class="sect2">
+<h3 id="_format_2">3.2. Format</h3>
+<div class="paragraph"><p>The file is comma separated variables (CSV) with a header row.</p></div>
+<div class="tableblock">
+<table rules="all" width="100%" frame="border" cellspacing="0" cellpadding="4">
+<colgroup><col width="7%">
+<col width="21%">
+<col width="71%">
+</colgroup><thead>
+<tr>
+<th align="left" valign="top">Field Position </th>
+<th align="left" valign="top">Field Name </th>
+<th align="left" valign="top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">State Code</p></td>
+<td align="left" valign="top"><p class="table">The FIPS code of the state in which the monitor resides.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">2</p></td>
+<td align="left" valign="top"><p class="table">County Code</p></td>
+<td align="left" valign="top"><p class="table">The FIPS code of the county in which the monitor resides.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">3</p></td>
+<td align="left" valign="top"><p class="table">Site Number</p></td>
+<td align="left" valign="top"><p class="table">A unique number within the county identifying the site.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">4</p></td>
+<td align="left" valign="top"><p class="table">Parameter Code</p></td>
+<td align="left" valign="top"><p class="table">The AQS code corresponding to the parameter measured by the monitor.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">5</p></td>
+<td align="left" valign="top"><p class="table">Parameter Name</p></td>
+<td align="left" valign="top"><p class="table">The name or description assigned in AQS to the parameter measured by the monitor. Parameters may be pollutants or non-pollutants.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">6</p></td>
+<td align="left" valign="top"><p class="table">POC</p></td>
+<td align="left" valign="top"><p class="table">This is the “Parameter Occurrence Code” used to distinguish different instruments that measure the same parameter at the same site.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">7</p></td>
+<td align="left" valign="top"><p class="table">Latitude</p></td>
+<td align="left" valign="top"><p class="table">The monitoring site’s angular distance north of the equator measured in decimal degrees.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">8</p></td>
+<td align="left" valign="top"><p class="table">Longitude</p></td>
+<td align="left" valign="top"><p class="table">The monitoring site’s angular distance east of the prime meridian measured in decimal degrees.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">9</p></td>
+<td align="left" valign="top"><p class="table">Datum</p></td>
+<td align="left" valign="top"><p class="table">The Datum associated with the Latitude and Longitude measures.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">10</p></td>
+<td align="left" valign="top"><p class="table">First Year of Data</p></td>
+<td align="left" valign="top"><p class="table">The year in which the earliest sample from this site is available in AQS.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">11</p></td>
+<td align="left" valign="top"><p class="table">Last Sample Date</p></td>
+<td align="left" valign="top"><p class="table">The date on which the most recent sample from this site is available in AQS.  This is often the best way to determine if a monitor is still operating.  Note that the reporting deadlines to AQS are generally lengthy - about 6 months for most parameters.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">12</p></td>
+<td align="left" valign="top"><p class="table">Monitor Type</p></td>
+<td align="left" valign="top"><p class="table">An administrative or regulatory classification for the monitor.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">13</p></td>
+<td align="left" valign="top"><p class="table">Networks</p></td>
+<td align="left" valign="top"><p class="table">A list of the monitoring networks (groups of monitors with common goals and procedures) to which the monitor belongs.  If the monitor belongs to more than one network, the names will be separated with semicolons.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">14</p></td>
+<td align="left" valign="top"><p class="table">Reporting Agency</p></td>
+<td align="left" valign="top"><p class="table">The name of the agency responsible for reporting data to AQS.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">15</p></td>
+<td align="left" valign="top"><p class="table">PQAO</p></td>
+<td align="left" valign="top"><p class="table">The name of the Primary Quality Assurance Organization for the monitor.  Monitors of the same parameter belonging to the same PQAO must meet aggregate quality assurance requirements.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">16</p></td>
+<td align="left" valign="top"><p class="table">Collecting Agency</p></td>
+<td align="left" valign="top"><p class="table">The name of the agency responsible for collecting data from the monitor.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">17</p></td>
+<td align="left" valign="top"><p class="table">Exclusions</p></td>
+<td align="left" valign="top"><p class="table">If the agency operating the monitor has requested that data from this monitor be excluded from NAAQS calculations and the governing EPA regional office has agreed, the NAAQS standard(s) and the years of exclusion are listed.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">18</p></td>
+<td align="left" valign="top"><p class="table">Monitoring Objective</p></td>
+<td align="left" valign="top"><p class="table">Identification of the reason for measuring air quality by the monitor.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">19</p></td>
+<td align="left" valign="top"><p class="table">Last Method Code</p></td>
+<td align="left" valign="top"><p class="table">A three digit code representing the measurement method used by the monitor for its most recent sample (methods can change, but often do not). A method code is only unique within a parameter (that is, method 111 for ozone is not the same as method 111 for benzene).</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">20</p></td>
+<td align="left" valign="top"><p class="table">Last Method</p></td>
+<td align="left" valign="top"><p class="table">The full description of the measurement method used by the monitor for its most recent sample (methods can change, but often do not).</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">21</p></td>
+<td align="left" valign="top"><p class="table">NAAQS Primary Monitor</p></td>
+<td align="left" valign="top"><p class="table">A flag indicating if this monitor is part of a collocated set of monitors at the site and it is the primary data source for NAAQS data comparisons.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">22</p></td>
+<td align="left" valign="top"><p class="table">QA Primary Monitor</p></td>
+<td align="left" valign="top"><p class="table">A flag indicating if this monitor is part of a collocated set of monitors at the site and it is the primary monitor for making quality assurance comparisons.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">23</p></td>
+<td align="left" valign="top"><p class="table">Local Site Name</p></td>
+<td align="left" valign="top"><p class="table">The name of the site (if any) given by the State, local, or tribal air pollution control agency that operates it.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">24</p></td>
+<td align="left" valign="top"><p class="table">Address</p></td>
+<td align="left" valign="top"><p class="table">The approximate street address of the monitoring site.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">25</p></td>
+<td align="left" valign="top"><p class="table">State Name</p></td>
+<td align="left" valign="top"><p class="table">The name of the state where the monitoring site is located.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">26</p></td>
+<td align="left" valign="top"><p class="table">County Name</p></td>
+<td align="left" valign="top"><p class="table">The name of the county where the monitoring site is located.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">27</p></td>
+<td align="left" valign="top"><p class="table">City Name</p></td>
+<td align="left" valign="top"><p class="table">The name of the city where the monitoring site is located.  This represents the legal incorporated boundaries of cities and not urban areas.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">28</p></td>
+<td align="left" valign="top"><p class="table">CBSA Name</p></td>
+<td align="left" valign="top"><p class="table">The name of the core bases statistical area (metropolitan area) where the monitoring site is located.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">29</p></td>
+<td align="left" valign="top"><p class="table">Tribe Name</p></td>
+<td align="left" valign="top"><p class="table">If this monitor resides on tribal lands and the tribe has chosen to identify the site with tribal identifiers, this is the name of the tribe that owns the site.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">30</p></td>
+<td align="left" valign="top"><p class="table">Extraction Date</p></td>
+<td align="left" valign="top"><p class="table">The date on which this data was retrieved from the AQS Data Mart.  This does not mean that all data is valid as of this date.  Once monitor information is entered by the reporting agency, it may not be updated as values change (e.g., location setting evolves from urban to suburban).</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_annual_summary_files">4. Annual Summary Files</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_content_3">4.1. Content</h3>
+<div class="paragraph"><p>Each annual summary file contains data for every monitor (sampled parameter) in our database for the year.  These files are relatively small and did not warrant being broken down by parameter, etc.</p></div>
+<div class="paragraph"><p>The annual summary files contain (at least) one record for each monitor that reported data for the given year.  There will be multiple records for the monitor if:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+There are calculated sample durations for the pollutant.  For example, PM2.5 is sometimes reported as 1-hour samples and EPA calculates 24-hour averages.
+</p>
+</li>
+<li>
+<p>
+There are multiple standards for the pollutant (q.v. pollutant standards).
+</p>
+</li>
+<li>
+<p>
+There were exceptional events associated with some measurements that the monitoring agency has or may request be excluded from comparison to the standard.
+</p>
+</li>
+</ul></div>
+</div>
+<div class="sect2">
+<h3 id="_format_3">4.2. Format</h3>
+<div class="paragraph"><p>The file is comma separated variables (CSV) with a header row.</p></div>
+<div class="tableblock">
+<table rules="all" width="100%" frame="border" cellspacing="0" cellpadding="4">
+<colgroup><col width="7%">
+<col width="21%">
+<col width="71%">
+</colgroup><thead>
+<tr>
+<th align="left" valign="top">Field Position </th>
+<th align="left" valign="top">Field Name </th>
+<th align="left" valign="top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">State Code</p></td>
+<td align="left" valign="top"><p class="table">The FIPS code of the state in which the monitor resides.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">2</p></td>
+<td align="left" valign="top"><p class="table">County Code</p></td>
+<td align="left" valign="top"><p class="table">The FIPS code of the county in which the monitor resides.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">3</p></td>
+<td align="left" valign="top"><p class="table">Site Num</p></td>
+<td align="left" valign="top"><p class="table">A unique number within the county identifying the site.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">4</p></td>
+<td align="left" valign="top"><p class="table">Parameter Code</p></td>
+<td align="left" valign="top"><p class="table">The AQS code corresponding to the parameter measured by the monitor.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">5</p></td>
+<td align="left" valign="top"><p class="table">POC</p></td>
+<td align="left" valign="top"><p class="table">This is the “Parameter Occurrence Code” used to distinguish different instruments that measure the same parameter at the same site.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">6</p></td>
+<td align="left" valign="top"><p class="table">Latitude</p></td>
+<td align="left" valign="top"><p class="table">The monitoring site’s angular distance north of the equator measured in decimal degrees.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">7</p></td>
+<td align="left" valign="top"><p class="table">Longitude</p></td>
+<td align="left" valign="top"><p class="table">The monitoring site’s angular distance east of the prime meridian measured in decimal degrees.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">8</p></td>
+<td align="left" valign="top"><p class="table">Datum</p></td>
+<td align="left" valign="top"><p class="table">The Datum associated with the Latitude and Longitude measures.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">9</p></td>
+<td align="left" valign="top"><p class="table">Parameter Name</p></td>
+<td align="left" valign="top"><p class="table">The name or description assigned in AQS to the parameter measured by the monitor. Parameters may be pollutants or non-pollutants.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">10</p></td>
+<td align="left" valign="top"><p class="table">Sample Duration</p></td>
+<td align="left" valign="top"><p class="table">The length of time that air passes through the monitoring device before it is analyzed (measured). So, it represents an averaging period in the atmosphere (for example, a 24-hour sample duration draws ambient air over a collection filter for 24 straight hours). For continuous monitors, it can represent an averaging time of many samples (for example, a 1-hour value may be the average of four one-minute samples collected during each quarter of the hour).</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">11</p></td>
+<td align="left" valign="top"><p class="table">Pollutant Standard</p></td>
+<td align="left" valign="top"><p class="table">A description of the ambient air quality standard rules used to aggregate statistics.  (See description at beginning of document.)</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">12</p></td>
+<td align="left" valign="top"><p class="table">Metric Used</p></td>
+<td align="left" valign="top"><p class="table">The base metric used in the calculation of the aggregate statistics presented in the remainder of the row.  For example, if this is Daily Maximum, then the value in the Mean column is the mean of the daily maximums.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">13</p></td>
+<td align="left" valign="top"><p class="table">Method Name</p></td>
+<td align="left" valign="top"><p class="table">A short description of the processes, equipment, and protocols used in gathering and measuring the sample.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">14</p></td>
+<td align="left" valign="top"><p class="table">Year</p></td>
+<td align="left" valign="top"><p class="table">The year the annual summary data represents.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">15</p></td>
+<td align="left" valign="top"><p class="table">Units of Measure</p></td>
+<td align="left" valign="top"><p class="table">The unit of measure for the parameter. QAD always returns data in the standard units for the parameter. Submitters are allowed to report data in any unit and EPA converts to a standard unit so that we may use the data in calculations.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">16</p></td>
+<td align="left" valign="top"><p class="table">Event Type</p></td>
+<td align="left" valign="top"><p class="table">Indicates whether data measured during exceptional events are included in the summary. A wildfire is an example of an exceptional event; it is something that affects air quality, but the local agency has no control over. No Events means no events occurred. Events Included means events occurred and the data from them is included in the summary. Events Excluded means that events occurred but data form them is excluded from the summary.  Concurred Events Excluded means that events occurred but only EPA concurred exclusions are removed from the summary.  If an event occurred for the parameter in question, the data will have multiple records for each monitor.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">17</p></td>
+<td align="left" valign="top"><p class="table">Observation Count</p></td>
+<td align="left" valign="top"><p class="table">The number of observations (samples) taken during the year.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">18</p></td>
+<td align="left" valign="top"><p class="table">Observation Percent</p></td>
+<td align="left" valign="top"><p class="table">The percent representing the number of observations taken with respect to the number scheduled to be taken during the year. This is only calculated for monitors where measurements are required (e.g., only certain parameters).</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">19</p></td>
+<td align="left" valign="top"><p class="table">Completeness Indicator</p></td>
+<td align="left" valign="top"><p class="table">An indication of whether the regulatory data completeness criteria for valid summary data have been met by the monitor for the year.  Y means yes, N means no or that there are no regulatory completeness criteria for the parameter.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">20</p></td>
+<td align="left" valign="top"><p class="table">Valid Day Count</p></td>
+<td align="left" valign="top"><p class="table">The number of days during the year where the daily monitoring criteria were met, if the calculation of the summaries is based on valid days.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">21</p></td>
+<td align="left" valign="top"><p class="table">Required Day Count</p></td>
+<td align="left" valign="top"><p class="table">The number of days during the year which the monitor was scheduled to take samples if measurements are required.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">22</p></td>
+<td align="left" valign="top"><p class="table">Exceptional Data Count</p></td>
+<td align="left" valign="top"><p class="table">The number of data points in the annual data set affected by exceptional air quality events (things outside the norm that affect air quality).</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">23</p></td>
+<td align="left" valign="top"><p class="table">Null Data Count</p></td>
+<td align="left" valign="top"><p class="table">The count of scheduled samples when no data was collected and the reason for no data was reported.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">24</p></td>
+<td align="left" valign="top"><p class="table">Primary Exceedance Count</p></td>
+<td align="left" valign="top"><p class="table">The number of samples during the year that exceeded the primary air quality standard.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">25</p></td>
+<td align="left" valign="top"><p class="table">Secondary Exceedance Count</p></td>
+<td align="left" valign="top"><p class="table">The number of samples during the year that exceeded the secondary air quality standard.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">26</p></td>
+<td align="left" valign="top"><p class="table">Certification Indicator</p></td>
+<td align="left" valign="top"><p class="table">An indication whether the completeness and accuracy of the information on the annual summary record has been certified by the submitter.  Certified means the submitter has certified the data (due May 01 the year after collection). Certification not required means that the parameter does not require certification or the deadline has not yet passed.  Uncertified (past due) means that certification is required but is overdue.  Requested but not yet concurred means the submitter has completed the process, but EPA has not yet acted to certify the data.  Requested but denied means the submitter has completed the process, but EPA has denied the request for cause.  Was certified but data changed means the data was certified but data was replaced and the process has not been repeated.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">27</p></td>
+<td align="left" valign="top"><p class="table">Num Obs Below MDL</p></td>
+<td align="left" valign="top"><p class="table">The number of samples reported during the year that were below the method detection limit (MDL) for the monitoring instrument.  Sometimes these values are replaced by 1/2 the MDL in summary calculations.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">28</p></td>
+<td align="left" valign="top"><p class="table">Arithmetic Mean</p></td>
+<td align="left" valign="top"><p class="table">The average (arithmetic mean) value for the year.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">29</p></td>
+<td align="left" valign="top"><p class="table">Arithmetic Standard Dev</p></td>
+<td align="left" valign="top"><p class="table">The standard deviation about the mean of the values for the year.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">30</p></td>
+<td align="left" valign="top"><p class="table">1st Max Value</p></td>
+<td align="left" valign="top"><p class="table">The highest value for the year.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">31</p></td>
+<td align="left" valign="top"><p class="table">1st Max DateTime</p></td>
+<td align="left" valign="top"><p class="table">The date and time (on a 24-hour clock) when the highest value for the year (the previous field) was taken.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">32</p></td>
+<td align="left" valign="top"><p class="table">2nd Max Value</p></td>
+<td align="left" valign="top"><p class="table">The second highest value for the year.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">33</p></td>
+<td align="left" valign="top"><p class="table">2nd Max DateTime</p></td>
+<td align="left" valign="top"><p class="table">The date and time (on a 24-hour clock) when the second highest value for the year (the previous field) was taken.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">34</p></td>
+<td align="left" valign="top"><p class="table">3rd Max Value</p></td>
+<td align="left" valign="top"><p class="table">The third highest value for the year.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">35</p></td>
+<td align="left" valign="top"><p class="table">3rd Max DateTime</p></td>
+<td align="left" valign="top"><p class="table">The date and time (on a 24-hour clock) when the third highest value for the year (the previous field) was taken.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">36</p></td>
+<td align="left" valign="top"><p class="table">4th Max Value</p></td>
+<td align="left" valign="top"><p class="table">The fourth highest value for the year.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">37</p></td>
+<td align="left" valign="top"><p class="table">4th Max DateTime</p></td>
+<td align="left" valign="top"><p class="table">The date and time (on a 24-hour clock) when the fourth highest value for the year (the previous field) was taken.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">38</p></td>
+<td align="left" valign="top"><p class="table">1st Max Non Overlapping Value</p></td>
+<td align="left" valign="top"><p class="table">For 8-hour CO averages, the highest value of the year.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">39</p></td>
+<td align="left" valign="top"><p class="table">1st NO Max DateTime</p></td>
+<td align="left" valign="top"><p class="table">The date and time (on a 24-hour clock) when the first maximum non overlapping value for the year (the previous field) was taken.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">40</p></td>
+<td align="left" valign="top"><p class="table">2nd Max Non Overlapping Value</p></td>
+<td align="left" valign="top"><p class="table">For 8-hour CO averages, the second highest value of the year that does not share any hours with the 8-hour period of the first max non overlapping value.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">41</p></td>
+<td align="left" valign="top"><p class="table">2nd NO Max DateTime</p></td>
+<td align="left" valign="top"><p class="table">The date and time (on a 24-hour clock) when the second maximum non overlapping value for the year (the previous field) was taken.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">42</p></td>
+<td align="left" valign="top"><p class="table">99th Percentile</p></td>
+<td align="left" valign="top"><p class="table">The value from this monitor for which 99 per cent of the rest of the measured values for the year are equal to or less than.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">43</p></td>
+<td align="left" valign="top"><p class="table">98th Percentile</p></td>
+<td align="left" valign="top"><p class="table">The value from this monitor for which 98 per cent of the rest of the measured values for the year are equal to or less than.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">44</p></td>
+<td align="left" valign="top"><p class="table">95th Percentile</p></td>
+<td align="left" valign="top"><p class="table">The value from this monitor for which 95 per cent of the rest of the measured values for the year are equal to or less than.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">45</p></td>
+<td align="left" valign="top"><p class="table">90th Percentile</p></td>
+<td align="left" valign="top"><p class="table">The value from this monitor for which 90 per cent of the rest of the measured values for the year are equal to or less than.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">46</p></td>
+<td align="left" valign="top"><p class="table">75th Percentile</p></td>
+<td align="left" valign="top"><p class="table">The value from this monitor for which 75 per cent of the rest of the measured values for the year are equal to or less than.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">47</p></td>
+<td align="left" valign="top"><p class="table">50th Percentile</p></td>
+<td align="left" valign="top"><p class="table">The value from this monitor for which 50 per cent of the rest of the measured values for the year are equal to or less than (i.e., the median).</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">48</p></td>
+<td align="left" valign="top"><p class="table">10th Percentile</p></td>
+<td align="left" valign="top"><p class="table">The value from this monitor for which 10 per cent of the rest of the measured values for the year are equal to or less than.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">49</p></td>
+<td align="left" valign="top"><p class="table">Local Site Name</p></td>
+<td align="left" valign="top"><p class="table">The name of the site (if any) given by the State, local, or tribal air pollution control agency that operates it.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">50</p></td>
+<td align="left" valign="top"><p class="table">Address</p></td>
+<td align="left" valign="top"><p class="table">The approximate street address of the monitoring site.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">51</p></td>
+<td align="left" valign="top"><p class="table">State Name</p></td>
+<td align="left" valign="top"><p class="table">The name of the state where the monitoring site is located.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">52</p></td>
+<td align="left" valign="top"><p class="table">County Name</p></td>
+<td align="left" valign="top"><p class="table">The name of the county where the monitoring site is located.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">53</p></td>
+<td align="left" valign="top"><p class="table">City Name</p></td>
+<td align="left" valign="top"><p class="table">The name of the city where the monitoring site is located.  This represents the legal incorporated boundaries of cities and not urban areas.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">54</p></td>
+<td align="left" valign="top"><p class="table">CBSA Name</p></td>
+<td align="left" valign="top"><p class="table">The name of the core bases statistical area (metropolitan area) where the monitoring site is located.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">55</p></td>
+<td align="left" valign="top"><p class="table">Date of Last Change</p></td>
+<td align="left" valign="top"><p class="table">The date the last time any numeric values in this record were updated in the AQS data system.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_daily_summary_files">5. Daily Summary Files</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_content_4">5.1. Content</h3>
+<div class="paragraph"><p>Each daily summary file contains data for every monitor (sampled parameter) in our database for each day.  These files are separated by parameter (or parameter group) to make the sizes more manageable.</p></div>
+<div class="paragraph"><p>This file will contain a daily summary record that is:</p></div>
+<div class="paragraph"><p>1) The aggregate of all sub-daily measurements taken at the monitor.</p></div>
+<div class="paragraph"><p>2) The single sample value if the monitor takes a single, daily sample (e.g., there is only one sample with a 24-hour duration).  In this case, the mean and max daily sample will have the same value.</p></div>
+<div class="paragraph"><p>The daily summary files contain (at least) one record for each monitor that reported data for the given day.  There may be multiple records for the monitor if:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+There are calculated sample durations for the pollutant.  For example, PM2.5 is sometimes reported as 1-hour samples and EPA calculates 24-hour averages.
+</p>
+</li>
+<li>
+<p>
+There are multiple standards for the pollutant (q.v. pollutant standards).
+</p>
+</li>
+<li>
+<p>
+There were exceptional events associated with some measurements that the monitoring agency has or may request be excluded from comparison to the standard.
+</p>
+</li>
+</ul></div>
+</div>
+<div class="sect2">
+<h3 id="_format_4">5.2. Format</h3>
+<div class="paragraph"><p>The file is comma separated variables (CSV) with a header row.</p></div>
+<div class="tableblock">
+<table rules="all" width="100%" frame="border" cellspacing="0" cellpadding="4">
+<colgroup><col width="7%">
+<col width="21%">
+<col width="71%">
+</colgroup><thead>
+<tr>
+<th align="left" valign="top">Field Position </th>
+<th align="left" valign="top">Field Name </th>
+<th align="left" valign="top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">State Code</p></td>
+<td align="left" valign="top"><p class="table">The FIPS code of the state in which the monitor resides.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">2</p></td>
+<td align="left" valign="top"><p class="table">County Code</p></td>
+<td align="left" valign="top"><p class="table">The FIPS code of the county in which the monitor resides.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">3</p></td>
+<td align="left" valign="top"><p class="table">Site Num</p></td>
+<td align="left" valign="top"><p class="table">A unique number within the county identifying the site.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">4</p></td>
+<td align="left" valign="top"><p class="table">Parameter Code</p></td>
+<td align="left" valign="top"><p class="table">The AQS code corresponding to the parameter measured by the monitor.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">5</p></td>
+<td align="left" valign="top"><p class="table">POC</p></td>
+<td align="left" valign="top"><p class="table">This is the “Parameter Occurrence Code” used to distinguish different instruments that measure the same parameter at the same site.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">6</p></td>
+<td align="left" valign="top"><p class="table">Latitude</p></td>
+<td align="left" valign="top"><p class="table">The monitoring site’s angular distance north of the equator measured in decimal degrees.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">7</p></td>
+<td align="left" valign="top"><p class="table">Longitude</p></td>
+<td align="left" valign="top"><p class="table">The monitoring site’s angular distance east of the prime meridian measured in decimal degrees.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">8</p></td>
+<td align="left" valign="top"><p class="table">Datum</p></td>
+<td align="left" valign="top"><p class="table">The Datum associated with the Latitude and Longitude measures.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">9</p></td>
+<td align="left" valign="top"><p class="table">Parameter Name</p></td>
+<td align="left" valign="top"><p class="table">The name or description assigned in AQS to the parameter measured by the monitor. Parameters may be pollutants or non-pollutants.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">10</p></td>
+<td align="left" valign="top"><p class="table">Sample Duration</p></td>
+<td align="left" valign="top"><p class="table">The length of time that air passes through the monitoring device before it is analyzed (measured). So, it represents an averaging period in the atmosphere (for example, a 24-hour sample duration draws ambient air over a collection filter for 24 straight hours). For continuous monitors, it can represent an averaging time of many samples (for example, a 1-hour value may be the average of four one-minute samples collected during each quarter of the hour).</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">11</p></td>
+<td align="left" valign="top"><p class="table">Pollutant Standard</p></td>
+<td align="left" valign="top"><p class="table">A description of the ambient air quality standard rules used to aggregate statistics.  (See description at beginning of document.)</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">12</p></td>
+<td align="left" valign="top"><p class="table">Date Local</p></td>
+<td align="left" valign="top"><p class="table">The calendar date for the summary.  All daily summaries are for the local standard day (midnight to midnight) at the monitor.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">13</p></td>
+<td align="left" valign="top"><p class="table">Units of Measure</p></td>
+<td align="left" valign="top"><p class="table">The unit of measure for the parameter. QAD always returns data in the standard units for the parameter. Submitters are allowed to report data in any unit and EPA converts to a standard unit so that we may use the data in calculations.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">14</p></td>
+<td align="left" valign="top"><p class="table">Event Type</p></td>
+<td align="left" valign="top"><p class="table">Indicates whether data measured during exceptional events are included in the summary. A wildfire is an example of an exceptional event; it is something that affects air quality, but the local agency has no control over. No Events means no events occurred. Events Included means events occurred and the data from them is included in the summary. Events Excluded means that events occurred but data form them is excluded from the summary.  Concurred Events Excluded means that events occurred but only EPA concurred exclusions are removed from the summary.  If an event occurred for the parameter in question, the data will have multiple records for each monitor.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">15</p></td>
+<td align="left" valign="top"><p class="table">Observation Count</p></td>
+<td align="left" valign="top"><p class="table">The number of observations (samples) taken during the day.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">16</p></td>
+<td align="left" valign="top"><p class="table">Observation Percent</p></td>
+<td align="left" valign="top"><p class="table">The percent representing the number of observations taken with respect to the number scheduled to be taken during the day. This is only calculated for monitors where measurements are required (e.g., only certain parameters).</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">17</p></td>
+<td align="left" valign="top"><p class="table">Arithmetic Mean</p></td>
+<td align="left" valign="top"><p class="table">The average (arithmetic mean) value for the day.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">18</p></td>
+<td align="left" valign="top"><p class="table">1st Max Value</p></td>
+<td align="left" valign="top"><p class="table">The highest value for the day.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">19</p></td>
+<td align="left" valign="top"><p class="table">1st Max Hour</p></td>
+<td align="left" valign="top"><p class="table">The hour (on a 24-hour clock) when the highest value for the day (the previous field) was taken.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">20</p></td>
+<td align="left" valign="top"><p class="table">AQI</p></td>
+<td align="left" valign="top"><p class="table">The Air Quality Index for the day for the pollutant, if applicable.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">21</p></td>
+<td align="left" valign="top"><p class="table">Method Code</p></td>
+<td align="left" valign="top"><p class="table">An internal system code indicating the method (processes, equipment, and protocols) used in gathering and measuring the sample.  The method name is in the next column.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">22</p></td>
+<td align="left" valign="top"><p class="table">Method Name</p></td>
+<td align="left" valign="top"><p class="table">A short description of the processes, equipment, and protocols used in gathering and measuring the sample.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">23</p></td>
+<td align="left" valign="top"><p class="table">Local Site Name</p></td>
+<td align="left" valign="top"><p class="table">The name of the site (if any) given by the State, local, or tribal air pollution control agency that operates it.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">24</p></td>
+<td align="left" valign="top"><p class="table">Address</p></td>
+<td align="left" valign="top"><p class="table">The approximate street address of the monitoring site.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">25</p></td>
+<td align="left" valign="top"><p class="table">State Name</p></td>
+<td align="left" valign="top"><p class="table">The name of the state where the monitoring site is located.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">26</p></td>
+<td align="left" valign="top"><p class="table">County Name</p></td>
+<td align="left" valign="top"><p class="table">The name of the county where the monitoring site is located.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">27</p></td>
+<td align="left" valign="top"><p class="table">City Name</p></td>
+<td align="left" valign="top"><p class="table">The name of the city where the monitoring site is located.  This represents the legal incorporated boundaries of cities and not urban areas.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">28</p></td>
+<td align="left" valign="top"><p class="table">CBSA Name</p></td>
+<td align="left" valign="top"><p class="table">The name of the core bases statistical area (metropolitan area) where the monitoring site is located.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">29</p></td>
+<td align="left" valign="top"><p class="table">Date of Last Change</p></td>
+<td align="left" valign="top"><p class="table">The date the last time any numeric values in this record were updated in the AQS data system.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_hourly_data_files">6. Hourly Data Files</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_content_5">6.1. Content</h3>
+<div class="paragraph"><p>These files contain the hourly data (sometimes called measurements, samples, etc).  These files are separated by parameter (or parameter group) to make the sizes more manageable.</p></div>
+<div class="paragraph"><p>EPA does get sample data reported at durations other than hourly.  For example, some SO2 is reported as 5-minute samples and some toxic substances are reported as 3-hour samples (and most PM speciation data is reported as 24-hour samples).  These samples have not been included in these hourly files but their aggregates are included in the daily files, and the sample data is available on request.</p></div>
+<div class="paragraph"><p>If a particular file is empty (record count = 0) that means that no hourly data was collected for that parameter or group.</p></div>
+<div class="paragraph"><p>To keep the size of the raw data files smaller, less geographic descriptive information has been included.  If you need the Local Site Name, CBSA, etc. you can find that in the Annual Summary file for the same monitor.</p></div>
+</div>
+<div class="sect2">
+<h3 id="_format_5">6.2. Format</h3>
+<div class="paragraph"><p>The file is comma separated variables (CSV) with a header row.</p></div>
+<div class="tableblock">
+<table rules="all" width="100%" frame="border" cellspacing="0" cellpadding="4">
+<colgroup><col width="7%">
+<col width="21%">
+<col width="71%">
+</colgroup><thead>
+<tr>
+<th align="left" valign="top">Field Position </th>
+<th align="left" valign="top">Field Name </th>
+<th align="left" valign="top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">State Code</p></td>
+<td align="left" valign="top"><p class="table">The FIPS code of the state in which the monitor resides.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">2</p></td>
+<td align="left" valign="top"><p class="table">County Code</p></td>
+<td align="left" valign="top"><p class="table">The FIPS code of the county in which the monitor resides.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">3</p></td>
+<td align="left" valign="top"><p class="table">Site Num</p></td>
+<td align="left" valign="top"><p class="table">A unique number within the county identifying the site.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">4</p></td>
+<td align="left" valign="top"><p class="table">Parameter Code</p></td>
+<td align="left" valign="top"><p class="table">The AQS code corresponding to the parameter measured by the monitor.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">5</p></td>
+<td align="left" valign="top"><p class="table">POC</p></td>
+<td align="left" valign="top"><p class="table">This is the “Parameter Occurrence Code” used to distinguish different instruments that measure the same parameter at the same site.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">6</p></td>
+<td align="left" valign="top"><p class="table">Latitude</p></td>
+<td align="left" valign="top"><p class="table">The monitoring site’s angular distance north of the equator measured in decimal degrees.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">7</p></td>
+<td align="left" valign="top"><p class="table">Longitude</p></td>
+<td align="left" valign="top"><p class="table">The monitoring site’s angular distance east of the prime meridian measured in decimal degrees.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">8</p></td>
+<td align="left" valign="top"><p class="table">Datum</p></td>
+<td align="left" valign="top"><p class="table">The Datum associated with the Latitude and Longitude measures.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">9</p></td>
+<td align="left" valign="top"><p class="table">Parameter Name</p></td>
+<td align="left" valign="top"><p class="table">The name or description assigned in AQS to the parameter measured by the monitor. Parameters may be pollutants or non-pollutants.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">10</p></td>
+<td align="left" valign="top"><p class="table">Date Local</p></td>
+<td align="left" valign="top"><p class="table">The calendar date of the sample in Local Standard Time at the monitor.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">11</p></td>
+<td align="left" valign="top"><p class="table">Time Local</p></td>
+<td align="left" valign="top"><p class="table">The time of day that sampling began on a 24-hour clock in Local Standard Time.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">12</p></td>
+<td align="left" valign="top"><p class="table">Date GMT</p></td>
+<td align="left" valign="top"><p class="table">The calendar date of the sample in Greenwich Mean Time.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">13</p></td>
+<td align="left" valign="top"><p class="table">Time GMT</p></td>
+<td align="left" valign="top"><p class="table">The time of day that sampling began on a 24-hour clock in Greenwich Mean Time.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">14</p></td>
+<td align="left" valign="top"><p class="table">Sample Measurement</p></td>
+<td align="left" valign="top"><p class="table">The measured value in the standard units of measure for the parameter.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">15</p></td>
+<td align="left" valign="top"><p class="table">Units of Measure</p></td>
+<td align="left" valign="top"><p class="table">The unit of measure for the parameter. QAD always returns data in the standard units for the parameter. Submitters are allowed to report data in any unit and EPA converts to a standard unit so that we may use the data in calculations.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">16</p></td>
+<td align="left" valign="top"><p class="table">MDL</p></td>
+<td align="left" valign="top"><p class="table">The Method Detection Limit.  The minimum sample concentration detectable for the monitor and method. Note: if samples are reported below this level, they may have been replaced by 1/2 the MDL.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">17</p></td>
+<td align="left" valign="top"><p class="table">Uncertainty</p></td>
+<td align="left" valign="top"><p class="table">The total measurement uncertainty associated with a reported measurement as indicated by the reporting agency.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">18</p></td>
+<td align="left" valign="top"><p class="table">Qualifier</p></td>
+<td align="left" valign="top"><p class="table">Sample values may have qualifiers that indicate why they are missing or that they are out of the ordinary. Types of qualifiers are: null data, exceptional event, natural events, and quality assurance.  The highest ranking qualifier, if any, is described in this field.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">19</p></td>
+<td align="left" valign="top"><p class="table">Method Type</p></td>
+<td align="left" valign="top"><p class="table">An indication of whether the method used to collect the data is a federal reference method (FRM), equivalent to a federal reference method, an approved regional method, or none of the above (non-federal reference method).</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">20</p></td>
+<td align="left" valign="top"><p class="table">Method Code</p></td>
+<td align="left" valign="top"><p class="table">An internal system code indicating the method (processes, equipment, and protocols) used in gathering and measuring the sample.  The method name is in the next column.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">21</p></td>
+<td align="left" valign="top"><p class="table">Method Name</p></td>
+<td align="left" valign="top"><p class="table">A short description of the processes, equipment, and protocols used in gathering and measuring the sample.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">22</p></td>
+<td align="left" valign="top"><p class="table">State Name</p></td>
+<td align="left" valign="top"><p class="table">The name of the state where the monitoring site is located.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">23</p></td>
+<td align="left" valign="top"><p class="table">County Name</p></td>
+<td align="left" valign="top"><p class="table">The name of the county where the monitoring site is located.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">24</p></td>
+<td align="left" valign="top"><p class="table">Date of Last Change</p></td>
+<td align="left" valign="top"><p class="table">The date the last time any numeric values in this record were updated in the AQS data system.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_8_hour_average_files">7. 8-Hour Average Files</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_content_6">7.1. Content</h3>
+<div class="paragraph"><p>Ozone and CO have NAAQS in the form of an 8-hour average.  (Note that the ozone time stamp is at the begin hour of an 8-hour period and CO is at the end hour.)  For convenience, we are posting the EPA calculated 8-hour averages.</p></div>
+<div class="paragraph"><p>These files are also at the monitor level.  An 8-hour average is calculated for every clock hour.  Only complete data (e.g., with 6 or more valid hourly samples in the 8 hour block, or 75% completeness) is included in these files.</p></div>
+</div>
+<div class="sect2">
+<h3 id="_format_6">7.2. Format</h3>
+<div class="paragraph"><p>The file is comma separated variables (CSV) with a header row.</p></div>
+<div class="tableblock">
+<table rules="all" width="100%" frame="border" cellspacing="0" cellpadding="4">
+<colgroup><col width="7%">
+<col width="21%">
+<col width="71%">
+</colgroup><thead>
+<tr>
+<th align="left" valign="top">Field Position </th>
+<th align="left" valign="top">Field Name </th>
+<th align="left" valign="top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">State Code</p></td>
+<td align="left" valign="top"><p class="table">The FIPS code of the state in which the monitor resides.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">2</p></td>
+<td align="left" valign="top"><p class="table">County Code</p></td>
+<td align="left" valign="top"><p class="table">The FIPS code of the county in which the monitor resides.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">3</p></td>
+<td align="left" valign="top"><p class="table">Site Num</p></td>
+<td align="left" valign="top"><p class="table">A unique number within the county identifying the site.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">4</p></td>
+<td align="left" valign="top"><p class="table">Parameter Code</p></td>
+<td align="left" valign="top"><p class="table">The AQS code corresponding to the parameter measured by the monitor.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">5</p></td>
+<td align="left" valign="top"><p class="table">POC</p></td>
+<td align="left" valign="top"><p class="table">This is the “Parameter Occurrence Code” used to distinguish different instruments that measure the same parameter at the same site.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">6</p></td>
+<td align="left" valign="top"><p class="table">Latitude</p></td>
+<td align="left" valign="top"><p class="table">The monitoring site’s angular distance north of the equator measured in decimal degrees.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">7</p></td>
+<td align="left" valign="top"><p class="table">Longitude</p></td>
+<td align="left" valign="top"><p class="table">The monitoring site’s angular distance east of the prime meridian measured in decimal degrees.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">8</p></td>
+<td align="left" valign="top"><p class="table">Datum</p></td>
+<td align="left" valign="top"><p class="table">The Datum associated with the Latitude and Longitude measures.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">9</p></td>
+<td align="left" valign="top"><p class="table">Parameter Name</p></td>
+<td align="left" valign="top"><p class="table">The name or description assigned in AQS to the parameter measured by the monitor. Parameters may be pollutants or non-pollutants.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">10</p></td>
+<td align="left" valign="top"><p class="table">Date Local</p></td>
+<td align="left" valign="top"><p class="table">The calendar date of the average in Local Standard Time at the monitor.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">11</p></td>
+<td align="left" valign="top"><p class="table">Time Local</p></td>
+<td align="left" valign="top"><p class="table">The time of day for the average on a 24-hour clock in Local Standard Time.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">12</p></td>
+<td align="left" valign="top"><p class="table">Date GMT</p></td>
+<td align="left" valign="top"><p class="table">The calendar date of the average in Greenwich Mean Time.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">13</p></td>
+<td align="left" valign="top"><p class="table">Time GMT</p></td>
+<td align="left" valign="top"><p class="table">The time of day for the average on a 24-hour clock in Greenwich Mean Time.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">14</p></td>
+<td align="left" valign="top"><p class="table">Sample Duration</p></td>
+<td align="left" valign="top"><p class="table">The averaging period.  Will always be 8-hours for these files, but the fact that the ozone time stamp is at the begin hour of an 8-hour period and CO is at the end hour is reiterated.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">15</p></td>
+<td align="left" valign="top"><p class="table">Pollutant Standard</p></td>
+<td align="left" valign="top"><p class="table">A description of the ambient air quality standard rules used to aggregate statistics.  (See description at beginning of document.)</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">16</p></td>
+<td align="left" valign="top"><p class="table">Units of Measure</p></td>
+<td align="left" valign="top"><p class="table">The unit of measure for the parameter. QAD always returns data in the standard units for the parameter. Submitters are allowed to report data in any unit and EPA converts to a standard unit so that we may use the data in calculations.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">17</p></td>
+<td align="left" valign="top"><p class="table">Observation Count</p></td>
+<td align="left" valign="top"><p class="table">The total number of observations (samples) taken during the 8-hour period.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">18</p></td>
+<td align="left" valign="top"><p class="table">Observations with Events</p></td>
+<td align="left" valign="top"><p class="table">The number of observations (samples) during the 8-hour period that were flagged by the data submitter as having been affected by an exceptional event.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">19</p></td>
+<td align="left" valign="top"><p class="table">Null Observations</p></td>
+<td align="left" valign="top"><p class="table">The number of observations (samples) during the 8-hour period that were missed (and reported as Null by the data submitter).</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">20</p></td>
+<td align="left" valign="top"><p class="table">Mean Including All Data</p></td>
+<td align="left" valign="top"><p class="table">The average (arithmetic mean) value including all data reported in the 8-hour block.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">21</p></td>
+<td align="left" valign="top"><p class="table">Mean Excluding All Flagged Data</p></td>
+<td align="left" valign="top"><p class="table">The average (arithmetic mean) value excluding all data flagged by the data submitter as having been affected by an exceptional event.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">22</p></td>
+<td align="left" valign="top"><p class="table">Mean Excluding All Concurred Flags</p></td>
+<td align="left" valign="top"><p class="table">The average (arithmetic mean) value excluding data flagged by the data submitter as having been affected by an exceptional event and that the EPA has concurred should be excluded from NAAQS calculations.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">23</p></td>
+<td align="left" valign="top"><p class="table">Date of Last Change</p></td>
+<td align="left" valign="top"><p class="table">The date the last time any numeric values in this record were updated in the AQS data system.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_blanks_data_files">8. Blanks Data Files</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_content_7">8.1. Content</h3>
+<div class="paragraph"><p>These files contain the field, trip, and lab blanks measurements.  Blanks are collection media that are not used to collect sample data but are analyzed to determine possible contamination paths and levels in normal samples.</p></div>
+</div>
+<div class="sect2">
+<h3 id="_format_7">8.2. Format</h3>
+<div class="paragraph"><p>The file is comma separated variables (CSV) with a header row.</p></div>
+<div class="tableblock">
+<table rules="all" width="100%" frame="border" cellspacing="0" cellpadding="4">
+<colgroup><col width="7%">
+<col width="21%">
+<col width="71%">
+</colgroup><thead>
+<tr>
+<th align="left" valign="top">Field Position </th>
+<th align="left" valign="top">Field Name </th>
+<th align="left" valign="top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">State Code</p></td>
+<td align="left" valign="top"><p class="table">The FIPS code of the state in which the monitor resides.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">2</p></td>
+<td align="left" valign="top"><p class="table">County Code</p></td>
+<td align="left" valign="top"><p class="table">The FIPS code of the county in which the monitor resides.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">3</p></td>
+<td align="left" valign="top"><p class="table">Site Num</p></td>
+<td align="left" valign="top"><p class="table">A unique number within the county identifying the site.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">4</p></td>
+<td align="left" valign="top"><p class="table">Parameter Code</p></td>
+<td align="left" valign="top"><p class="table">The AQS code corresponding to the parameter measured by the monitor.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">5</p></td>
+<td align="left" valign="top"><p class="table">POC</p></td>
+<td align="left" valign="top"><p class="table">This is the “Parameter Occurrence Code” used to distinguish different instruments that measure the same parameter at the same site.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">6</p></td>
+<td align="left" valign="top"><p class="table">Latitude</p></td>
+<td align="left" valign="top"><p class="table">The monitoring site’s angular distance north of the equator measured in decimal degrees.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">7</p></td>
+<td align="left" valign="top"><p class="table">Longitude</p></td>
+<td align="left" valign="top"><p class="table">The monitoring site’s angular distance east of the prime meridian measured in decimal degrees.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">8</p></td>
+<td align="left" valign="top"><p class="table">Datum</p></td>
+<td align="left" valign="top"><p class="table">The Datum associated with the Latitude and Longitude measures.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">9</p></td>
+<td align="left" valign="top"><p class="table">Parameter Name</p></td>
+<td align="left" valign="top"><p class="table">The name or description assigned in AQS to the parameter measured by the monitor. Parameters may be pollutants or non-pollutants.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">10</p></td>
+<td align="left" valign="top"><p class="table">Blanks Type</p></td>
+<td align="left" valign="top"><p class="table">The type of blank analyzed.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">11</p></td>
+<td align="left" valign="top"><p class="table">Date Local</p></td>
+<td align="left" valign="top"><p class="table">The calendar date the blank was exposed in Local Standard Time at the monitor.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">12</p></td>
+<td align="left" valign="top"><p class="table">Time Local</p></td>
+<td align="left" valign="top"><p class="table">The time of day the blank was exposed on a 24-hour clock in Local Standard Time.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">13</p></td>
+<td align="left" valign="top"><p class="table">Sample Measurement</p></td>
+<td align="left" valign="top"><p class="table">The measured value in the standard units of measure for the parameter.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">14</p></td>
+<td align="left" valign="top"><p class="table">Units of Measure</p></td>
+<td align="left" valign="top"><p class="table">The unit of measure for the parameter. QAD always returns data in the standard units for the parameter. Submitters are allowed to report data in any unit and EPA converts to a standard unit so that we may use the data in calculations.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">15</p></td>
+<td align="left" valign="top"><p class="table">Duration</p></td>
+<td align="left" valign="top"><p class="table">The length of time the blank was exposed.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">16</p></td>
+<td align="left" valign="top"><p class="table">MDL</p></td>
+<td align="left" valign="top"><p class="table">The Method Detection Limit.  The minimum sample concentration detectable for the monitor and method. Note: if samples are reported below this level, they may have been replaced by 1/2 the MDL.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">17</p></td>
+<td align="left" valign="top"><p class="table">Uncertainty</p></td>
+<td align="left" valign="top"><p class="table">The total measurement uncertainty associated with a reported measurement as indicated by the reporting agency.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">18</p></td>
+<td align="left" valign="top"><p class="table">Method Type</p></td>
+<td align="left" valign="top"><p class="table">An indication of whether the method used to collect the data is a federal reference method (FRM), equivalent to a federal reference method, an approved regional method, or none of the above (non-federal reference method).</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">19</p></td>
+<td align="left" valign="top"><p class="table">Method Name</p></td>
+<td align="left" valign="top"><p class="table">A short description of the processes, equipment, and protocols used in gathering and measuring the sample.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">20</p></td>
+<td align="left" valign="top"><p class="table">State Name</p></td>
+<td align="left" valign="top"><p class="table">The name of the state where the monitoring site is located.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">21</p></td>
+<td align="left" valign="top"><p class="table">County Name</p></td>
+<td align="left" valign="top"><p class="table">The name of the county where the monitoring site is located.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">22</p></td>
+<td align="left" valign="top"><p class="table">Date of Last Change</p></td>
+<td align="left" valign="top"><p class="table">The date the last time any numeric values in this record were updated in the AQS data system.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">23</p></td>
+<td align="left" valign="top"><p class="table">Qualifier 1</p></td>
+<td align="left" valign="top"><p class="table">Sample values may have qualifiers that indicate why they are missing or that they are out of the ordinary. Types of qualifiers are: null data, exceptional event, natural events, and quality assurance.  The highest ranking qualifier, if any, is described in this field.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">24</p></td>
+<td align="left" valign="top"><p class="table">Qualifier 2</p></td>
+<td align="left" valign="top"><p class="table">The second qualifier affecting this sample, if any, is described in this field.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">25</p></td>
+<td align="left" valign="top"><p class="table">Qualifier 3</p></td>
+<td align="left" valign="top"><p class="table">The third qualifier affecting this sample, if any, is described in this field.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">26</p></td>
+<td align="left" valign="top"><p class="table">Qualifier 4</p></td>
+<td align="left" valign="top"><p class="table">The fourth qualifier affecting this sample, if any, is described in this field.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">27</p></td>
+<td align="left" valign="top"><p class="table">Qualifier 5</p></td>
+<td align="left" valign="top"><p class="table">The fifth qualifier affecting this sample, if any, is described in this field.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">28</p></td>
+<td align="left" valign="top"><p class="table">Qualifier 6</p></td>
+<td align="left" valign="top"><p class="table">The sixth qualifier affecting this sample, if any, is described in this field.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">29</p></td>
+<td align="left" valign="top"><p class="table">Qualifier 7</p></td>
+<td align="left" valign="top"><p class="table">The seventh qualifier affecting this sample, if any, is described in this field.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">30</p></td>
+<td align="left" valign="top"><p class="table">Qualifier 8</p></td>
+<td align="left" valign="top"><p class="table">The eighth qualifier affecting this sample, if any, is described in this field.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">21</p></td>
+<td align="left" valign="top"><p class="table">Qualifier 9</p></td>
+<td align="left" valign="top"><p class="table">The ninth qualifier affecting this sample, if any, is described in this field.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">32</p></td>
+<td align="left" valign="top"><p class="table">Qualifier 10</p></td>
+<td align="left" valign="top"><p class="table">The tenth qualifier affecting this sample, if any, is described in this field.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div id="footer">
+<div id="footer-text">
+Last updated 2015-12-04 09:09:22 Eastern Standard Time
+</div>
+</div>
+
+
+</body></html>

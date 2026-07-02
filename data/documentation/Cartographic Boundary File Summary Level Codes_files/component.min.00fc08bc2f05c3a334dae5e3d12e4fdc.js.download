@@ -1,0 +1,284 @@
+function titleCase(string) {
+	var i, j, str, lowers, uppers;
+	str = string.replace(/([^\W_]+[^\s-]*) */g, function(txt) {
+		return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+	});
+
+	// Certain minor words should be left lowercase unless
+	// they are the first or last words in the string
+	lowers = ['A', 'An', 'The', 'And', 'But', 'Or', 'For', 'Nor', 'As', 'At',
+		'By', 'For', 'From', 'In', 'Into', 'Near', 'Of', 'On', 'Onto', 'To', 'With'];
+	for (i = 0, j = lowers.length; i < j; i++)
+		str = str.replace(new RegExp('\\s' + lowers[i] + '\\s', 'g'),
+			function(txt) {
+				return txt.toLowerCase();
+			});
+
+	// Certain words such as initialis or acronyms should be left uppercase
+	uppers = ['Id', 'Tv'];
+	for (i = 0, j = uppers.length; i < j; i++)
+		str = str.replace(new RegExp('\\b' + uppers[i] + '\\b', 'g'),
+			uppers[i].toUpperCase());
+
+	return str;
+}
+
+function getImageElement(title) {
+	const people = "people";
+	const peopleTitle = "total population";
+	
+	const income = "income";
+	const incomeTitle = "median household income";
+	
+	const education = "education";
+	const educationTitle = "bachelor's degree or higher";
+	
+	const employment = "employment";
+	const employmentTitle = "employment rate";
+	
+	const housing = "housing";
+	const housingTitle = "total housing units";
+	
+	const health = "health";
+	const healthTitle = "without health care coverage";
+	
+	const business = "business";
+	const businessTitle = "total employer establishments";
+	
+	const family = "family";
+	const familyTitle = "total households";
+	
+	const race = "race";
+	const raceTitle = "hispanic or latino (of any race)";
+
+	let imageEleStr = '';
+	switch (title) {
+		case peopleTitle: 
+			imageEleStr = `<img
+				src="/etc.clientlibs/census/clientlibs/cedsci-icons/resources/${people}.svg"
+				alt="Icon"/>`;
+			break;
+
+		case incomeTitle: 
+			imageEleStr = `<img
+				src="/etc.clientlibs/census/clientlibs/cedsci-icons/resources/${income}.svg"
+				alt="Icon"/>`;
+			break;
+			
+		case educationTitle: 
+			imageEleStr = `<img
+				src="/etc.clientlibs/census/clientlibs/cedsci-icons/resources/${education}.svg"
+				alt="Icon"/>`;
+			break;
+			
+		case employmentTitle: 
+			imageEleStr = `<img
+				src="/etc.clientlibs/census/clientlibs/cedsci-icons/resources/${employment}.svg"
+				alt="Icon"/>`;
+			break;
+	
+		case housingTitle: 
+			imageEleStr = `<img
+				src="/etc.clientlibs/census/clientlibs/cedsci-icons/resources/${housing}.svg"
+				alt="Icon"/>`;
+			break;
+	
+		case healthTitle: 
+			imageEleStr = `<img
+				src="/etc.clientlibs/census/clientlibs/cedsci-icons/resources/${health}.svg"
+				alt="Icon"/>`;
+			break;
+	
+		case businessTitle: 
+			imageEleStr = `<img
+				src="/etc.clientlibs/census/clientlibs/cedsci-icons/resources/${business}.svg"
+				alt="Icon"/>`;
+			break;
+	
+		case familyTitle: 
+			imageEleStr = `<img
+				src="/etc.clientlibs/census/clientlibs/cedsci-icons/resources/${family}.svg"
+				alt="Icon"/>`;
+			break;
+	
+		case raceTitle: 
+			imageEleStr = `<img
+				src="/etc.clientlibs/census/clientlibs/cedsci-icons/resources/${race}.svg"
+				alt="Icon"/>`;
+			break;
+	
+		default:
+			break;
+	}
+
+	return imageEleStr;
+	
+}
+
+var CensusInfoPanel = ( function() {
+	function init( queryOverride, uniqueID ) {
+		getHighlights( queryOverride, uniqueID );
+		getNAICS( queryOverride, uniqueID );
+	}
+
+	function getHighlights( queryOverride, uniqueID ) {
+		SearchDataService.subscribe( 'highlights', queryOverride ).then( function( highlights ) {
+			  // Should resolve immediately since the highlights call requires the search call to have already been made
+			SearchDataService.subscribe( 'selectedProfile', queryOverride ).then ( function( selectedProfile ) {
+				var $loading = $( '#highlights-' + uniqueID + ' + .highlights-loading' );
+
+				// if ( highlights && highlights.length > 0 && entities && entities.locations && entities.locations[0] ) {
+					var $parentElement = $( '#highlights-' + uniqueID );
+					var geoDescriptionText = $parentElement.find(".cmp-info-panel__geo-description");
+
+					highlights.forEach(function (datum) {
+
+						var title = datum.label.toLowerCase();
+						var value = datum.value;
+						var sourceTitle = datum.source;
+						var sourceURL = datum.sourceLink;
+						var format = datum.format;
+
+						var formattedValue;
+
+						var value_contains_symbol = false;
+						if (value === "-" || value === "+" || value === "N" || value === "(X)" || value.endsWith("-") || value.endsWith("+")) {
+							value_contains_symbol = true;
+						}
+
+						if (format.indexOf("percent") !== -1) {
+							formattedValue = value + " %";
+						} else if (format.indexOf("dollar") !== -1) {
+							if (value_contains_symbol) {
+								formattedValue = "$ " + value;
+							} else {
+								formattedValue = "$ " + Number(value).toLocaleString();
+							}
+						} else {
+							if (value_contains_symbol) {
+								formattedValue = value;
+							} else {
+								formattedValue = Number(value).toLocaleString();
+							}
+						}
+	
+						const imageEleStr = getImageElement(title);
+						var el = $(
+							"<div class='uscb-info-panel__geo-row'>" +
+							  "<div class='uscb-info-panel__geo-col-1'>"+
+							  imageEleStr +
+							  "</div>"+
+							  "<div class='uscb-info-panel__geo-col-2'>" +
+									"<div class='uscb-info-panel__geo-row-title uscb-capitalize'></div>" +
+									"<div class='uscb-info-panel__geo-row-value uscb-color-black'></div>" +
+									"<a class='uscb-info-panel__geo-row-source'></a>" +
+							  "</div>"+
+							"</div>"
+						  );
+						  
+						el.find(".uscb-info-panel__geo-row-title").text(title);
+						el.find(".uscb-info-panel__geo-row-value").text(formattedValue);
+						if ( sourceTitle && sourceURL) {
+							el.find(".uscb-info-panel__geo-row-source").text("Source: " + sourceTitle);
+							el.find(".uscb-info-panel__geo-row-source").attr("href", sourceURL + "?fm=info_panel");
+						}
+
+						el.appendTo( $parentElement.find( ".uscb-info-panel__list") );
+					});
+
+					$parentElement.removeClass( 'uscb-hide' );
+				// }
+				
+				$loading.addClass( 'uscb-hide' );
+			}, function( error ) {
+				  // Until we can ignore IE, we have to do it this way and not use .finally() which would be cleanest
+					// Hide the loading indicator
+				var $loading = $( '#highlights-' + uniqueID + ' + .highlights-loading' );
+				$loading.addClass( 'uscb-hide' );
+			});
+		}, function( error ) {
+			// Until we can ignore IE, we have to do it this way and not use .finally() which would be cleanest
+			  // Hide the loading indicator
+		  var $loading = $( '#highlights-' + uniqueID + ' + .highlights-loading' );
+		  $loading.addClass( 'uscb-hide' );
+	  });
+	}
+
+	function getNAICS( queryOverride, uniqueID ) {
+		SearchDataService.subscribe( 'entities', queryOverride ).then( function( entities ) {
+			var $loading = $( '#naics-' + uniqueID + ' + .naics-loading' );
+
+			if ( entities.naics ) {
+				// $("#cmp-info-panel__toolTip").dialog({ autoOpen: false, width: "auto", minHeight: "170px", resizable: false,
+				// 	dialogClass: "infoPanelAnnotationTooltipWidget",
+				// 	position: { my: "left top", at: "right-365 top", of: "#cmp-infopanelGroup" } });
+				var windowWidth = $(window).width();
+
+				initAccordionGroup("#naics-" + uniqueID, 992);
+				initAccordionGroup("#highlights-" + uniqueID, 992);
+				$(window).resize(function() {
+					if ($(window).width() != windowWidth) {
+						windowWidth = $(window).width();
+						if (Modernizr.mq('only screen and (max-width : 992px)')) {
+							resizeAccordionGroup("#naics-" + uniqueID, 992);
+							resizeAccordionGroup("#highlights-" + uniqueID, 992);
+						} else {
+							initAccordionGroup("#naics-" + uniqueID, 992);
+							initAccordionGroup("#highlights-" + uniqueID, 992);
+						}
+					}
+				});
+
+				$(".cmp-naics__toggle").on("keydown", function (e) {
+					if (e.keyCode === 13 || e.keyCode === 32) {
+						e.preventDefault()
+						$(this).trigger("click");
+					}
+				});
+
+				$(".cmp-info-panel__toggle").on("keydown", function (e) {
+					if (e.keyCode === 13 || e.keyCode === 32) {
+						e.preventDefault()
+						$(this).trigger("click");
+					}
+				});
+
+				// var geoInfoPanel = $('.cmp-info-panel');
+
+				// var fipsCode = geoInfoPanel.attr("data-fips-code");
+				// var fullGeoCode = geoInfoPanel.attr("data-full-geo-code");
+				// var profileURL = geoInfoPanel.attr("data-profile-url");
+				// var statsURL = geoInfoPanel.attr("data-stats-url");
+				// var geoDescription = geoInfoPanel.attr("geo-description");
+				// var customSearchQuery = geoInfoPanel.attr("data-custom-search-query");
+
+				var naicsCode = entities.naics[0].codes[0];
+				var naicsName = titleCase(entities.naics[0].displayName.split(":")[1].substring(1));
+
+				var $parentElement = $( '#naics-' + uniqueID );
+				$parentElement.find('.cmp-naics_firstLink').html(naicsCode);
+				$parentElement.find('.cmp-naics_description').html(naicsName);
+				$parentElement.find('.cmp-naics_secondLink').html("View '" + naicsCode + " - " + naicsName + "' in 2012 NAICS >>");
+
+				var naicsURL = "https://www.census.gov/cgi-bin/sssd/naics/naicsrch?code=" + naicsCode + "&search=2012+NAICS+Search";
+
+				$parentElement.find('.cmp-naics_link').each(function () {
+					$(this).attr("href", naicsURL);
+				});
+
+				$parentElement.removeClass( 'uscb-hide' );
+			}
+
+			$loading.addClass( 'uscb-hide' );
+		}, function( error ) {
+			  // Until we can ignore IE, we have to do it this way and not use .finally() which would be cleanest
+				// Hide the loading indicator
+			var $loading = $( '#naics-' + uniqueID + ' + .naics-loading' );
+			$loading.addClass( 'uscb-hide' );
+		});
+	}
+
+	return {
+		init: init
+	};
+})();

@@ -1,0 +1,694 @@
+/* 
+ * This code is coupled with the Census search typeahead HTL.
+ * 
+ * It is framework-less and should remain that way for the foreseeable future to aid other, non-AEM census pages to utilize it. 
+ * 
+ * As such, it does not inject any dependencies.
+ * 
+ */
+var CensusSearchTypeahead = (function() { // DO NOT INJECT FRAMEWORKS OR DEPENDENCIES THAT RELY ON FRAMEWORKS.
+	
+	var apiUri;
+	var resultUrl;
+    var cedsciUrl;
+	var isUSASearch;
+	    
+    var initSearchTypeahead = function(searchApiUri, searchResultUrl, cedsciUrl, isUsingUSASearch) {
+    	apiUri = searchApiUri;
+    	resultUrl = searchResultUrl;
+    	isUSASearch = (isUsingUSASearch == 'true');
+    	
+          // Move entire search structure to root of page to make masking simpler
+        // var $search = $( '.uscb-header-search-container' );
+        // if ( $search.length > 0 ) {
+        //     $( 'body' ).append( $search );
+        // }
+
+    	// Add a keyup event listener to our input element
+        var searchInput = document.getElementById('data-uscb-header-input');
+        
+        var throttle = function(fn, threshhold, scope) {
+            threshhold || (threshhold = 250);
+            var last,
+                deferTimer;
+            return function () {
+              var context = scope || this;
+          
+              var now = +new Date,
+                  args = arguments;
+              if (last && now < last + threshhold) {
+                // hold on to it
+                clearTimeout(deferTimer);
+                deferTimer = setTimeout(function () {
+                  last = now;
+                  fn.apply(context, args);
+                }, threshhold);
+              } else {
+                last = now;
+                fn.apply(context, args);
+              }
+            };
+        }
+
+        var parseResponse = function(xmlDoc) {
+
+            var getValue = function(xml, name) {
+                var elt = xml.getElementsByTagName(name);
+                if (elt && elt[0] && elt[0].childNodes && elt[0].childNodes[0] && elt[0].childNodes[0].nodeValue) {
+                    return elt[0].childNodes[0].nodeValue;
+                }
+
+                return "";
+            }
+
+            var getNestedValue = function(xml, outerName, innerName) {
+                var outerXml = xml.getElementsByTagName(outerName);
+                if (outerXml && outerXml[0]) {
+                    return getValue(outerXml[0], innerName);                        
+                }
+
+                return "";
+            }
+
+            var result = {};
+
+            var answerXml = xmlDoc.getElementsByTagName("Answer");
+            if (answerXml && answerXml[0]) {
+                answerXml = answerXml[0];
+                result.answers = {
+                    ansValue: getValue(answerXml, "Value"),
+                    ansGeography: getValue(answerXml, "Geography"),                                                                
+                    prefix: getValue(answerXml, "Prefix"),
+                    suffix: getValue(answerXml, "Suffix"),
+                    ansLastUpdated: getValue(answerXml, "LastUpdated"),
+                    ansDescription: getValue(answerXml, "Description"),
+                    ansSystemDesc: getNestedValue(answerXml, "System", "Description"),
+                    ansSystemURL: getNestedValue(answerXml, "System", "URL"),
+                }
+            }
+
+            var resultXml = xmlDoc.getElementsByTagName("result");
+            if (resultXml) {
+                result.results = [];
+                for (var i = 0; i < resultXml.length; i++) {
+                    if (resultXml[i]) {
+                        var resultXmlItem = resultXml[i];
+                        var category = resultXmlItem.getAttribute("category");
+                        var targetCategoryObj = undefined;
+                        for (var j = 0; j < result.results.length; j++) {
+                            if (result.results[j].category === category) {
+                                targetCategoryObj = result.results[j];
+                            }
+                        }
+                        if (targetCategoryObj === undefined) {
+                            targetCategoryObj = {
+                                category: category,
+                                items: []
+                            }
+                            result.results.push(targetCategoryObj);
+                        }
+                        targetCategoryObj.items.push({
+                            value: resultXmlItem.getAttribute("name")
+                        })
+                    }
+                }
+
+            }
+
+            return (result.answers || result.results) ? result : undefined;
+        }
+
+        var callTypeaheadService = function(query) {
+              // Unhide loading indicator
+            var $search = $( '.uscb-header-search' );
+            var $loading = $search.find( '.uscb-loading-linear-indeterminate' );
+
+            $loading.removeClass( 'uscb-hide' );
+
+            SearchDataService.typeahead( query ).then( function( data ) {
+                  // Hide loading indicator
+                $loading.addClass( 'uscb-hide' );
+
+                var $typeahead = $( '#data-uscb-header-search-typeahead' );
+                var $typeaheadContainer = $( '#data-uscb-header-search-typeahead-container' );
+                var $helpfulLinks = $( '#data-uscb-header-links-helpful' );
+
+                  // Clear the typeahead before repopulating
+                $typeahead.empty();
+
+                  // Build typeahead based on returned suggestions
+                if ( data && data.length > 0 ) {
+                    var $container = $( '<div class="uscb-typeahead-container"></div>' );
+                    data.forEach( function( suggestion ) {
+                        var $entry;
+                        if ( suggestion.type === 'tableid' ) {
+                            $entry = $( '<a class="uscb-typeahead-entry" href="' + cedsciUrl.replace( 'api/','' ) + 'table?q=' + suggestion.facets.tableid + '">' + suggestion.title + '</a>' );
+                        } else {
+                            $entry = $( '<a style="display: flex; align-items: center" class="uscb-typeahead-entry" href="' + resultUrl + suggestion.title + '">' + suggestion.title + '</a>' );
+                        }
+
+                        // Add icon
+                        switch(suggestion.type) {
+                            case "topic":
+                            case "geography":
+                            case "naics": 
+                            case "survey":
+                            case "year":
+                                $($entry).prepend(`<img
+                                    src="/etc.clientlibs/census/clientlibs/cedsci-icons/resources/${suggestion.type}.svg"
+                                    class="uscb-typeahead-entry-icon"
+                                    alt="Icon"/>`);
+                                break;
+                        }
+
+                        $container.append( $entry );
+                    });
+
+                    $typeahead.append( $container );
+                    $typeaheadContainer.removeClass( 'uscb-hide' );
+                    $helpfulLinks.addClass( 'uscb-hide' );
+                } else {
+                    $typeaheadContainer.addClass( 'uscb-hide' );
+                    $helpfulLinks.removeClass( 'uscb-hide' );
+                }
+            }, function() {
+                  // Hide loading indicator
+                $loading.addClass( 'uscb-hide' );
+            });
+        }
+
+        // Autocomplete for form
+        var hinter = function(event) {
+
+            // retireve the input element
+            var input = event.target;
+
+            // minimum number of characters before we start to generate suggestions
+            var min_characters = 3;
+
+            if (input.value.length < min_characters ) { 
+                $( '#data-uscb-header-search-typeahead-container' ).addClass( 'uscb-hide' );
+                $( '#data-uscb-header-links-helpful' ).removeClass( 'uscb-hide' );
+                return;
+            } else { 
+               callTypeaheadService( input.value );
+            }
+        }
+
+        searchInput.addEventListener("keyup", throttle(hinter));
+        // so we can abort old requests when a new one is make
+        window.hinterXHR = new XMLHttpRequest();
+        
+        // do some clean up on form submit
+        var $form = $(searchInput).closest('form');
+        $form.on('submit', function() {
+        	$form.find('#usaSearchName').remove();
+        	$form.find('#usaSearchApi').remove();
+        });
+    	
+    }
+
+    var onSearchFocus = function() {
+          // Take over the header and hide all non-search elements
+        toggleHeaderVisibility( false );
+        toggleSearchVisibility( true );
+
+        var $input = $( '.uscb-header-input' );
+        if ( $input.length > 0 ) {
+            $input.focus();
+        }
+    }
+
+      // Set non-search header items to given visibility
+    function toggleHeaderVisibility( show ) {
+        var $logo = $( '.uscb-header-logo' );
+        var $subNavs = $( '.uscb-header-nav-subs' );
+        var $mainNav = $( '.uscb-header-mainnav' );
+
+        if ( show ) {
+            if ( $logo.length > 0 ) {
+                $logo.show();
+            }
+
+            if ( $subNavs.length > 0 ) {
+                $subNavs.show()
+            }
+
+            if ( $mainNav.length > 0 ) {
+                $mainNav.show();
+            }
+        } else {
+            if ( $logo.length > 0 ) {
+                $logo.hide();
+            }
+
+            if ( $subNavs.length > 0 ) {
+                $subNavs.hide()
+            }
+
+            if ( $mainNav.length > 0 ) {
+                $mainNav.hide();
+            }
+        }
+    }
+
+      // Toggle search header items to given visibility
+    function toggleSearchVisibility( show ) {
+        var $input = $( '.uscb-header-input' );
+
+        if ( show ) {
+            if ( $input.length > 0 ) {
+                $input.show();
+            }
+        } else {
+            if ( $input.length > 0 ) {
+                $input.hide();
+            }
+        }
+    }
+    
+    var onSearchFocusBlur = function(active) {
+        var $searchContainer = $( '.uscb-header-search-container' );
+        if ( $searchContainer.length > 0 ) {
+            if ( active ) {
+                $searchContainer.show();
+                $searchContainer.addClass( 'uscb-header-search-container-active' );
+            } else {
+                $searchContainer.hide();
+                $searchContainer.removeClass( 'uscb-header-search-container-active' );
+            }
+        }
+
+        var searchIcon = document.getElementsByClassName("uscb-header-search-icon");
+        if (searchIcon && searchIcon[0]) {
+            searchIcon[0].style.display = active ? "none" : "block";
+        }
+        var searchButtons = document.getElementsByClassName("data-uscb-header-search-input-button");
+        if (searchButtons) {
+            for (var i = 0; i < searchButtons.length; i++) {
+                searchButtons[i].style.display = active ? "block" : "none";
+            }
+        }
+        
+        if (typeof(document.getElementsByClassName("uscb-header-backdrop")) !== 'undefined' && 
+        		document.getElementsByClassName("uscb-header-backdrop") != null && document.getElementsByClassName("uscb-header-backdrop").length > 0) {
+        	document.getElementsByClassName("uscb-header-backdrop")[0].style.display = active ? "block" : "none";
+        }
+        
+        if (!active && (typeof(document.getElementById("data-uscb-header-search-typeahead")) !== 'undefined' && 
+        		document.getElementById("data-uscb-header-search-typeahead") != null && document.getElementById("data-uscb-header-search-typeahead").length > 0)) {
+            // Don't activate unnecessarily, since search terms might not be present.
+            $("#data-uscb-header-search-typeahead-container").addClass( 'uscb-hide' );
+        }
+
+          // Close typeahead on blur if clicking outisde typeahead/search bar
+        if ( !active ) {
+            var typeahead = $("#data-uscb-header-search-typeahead-container");
+            if ( typeahead ) {
+                typeahead.addClass( 'uscb-hide' );
+            }
+        } else {
+            var typeahead = $("#data-uscb-header-search-typeahead-container");
+            if ( typeahead ) {
+                var typeaheadContainer = typeahead.find( 'uscb-typeahead-container' );
+                if ( typeaheadContainer.length > 0 && typeaheadContainer.childNodes.length !== 0 ) {
+                    $("#data-uscb-header-links-helpful").removeClass( 'uscb-hide' );
+                }
+            }
+
+            var $input = $( '#data-uscb-header-input' );
+            if ( $input.length > 0 ) {
+                $input.focus();
+            }
+        }
+    }
+    
+    var onSearchCloseClick = function() {
+        document.getElementById("data-uscb-header-input").value = "";
+        $("#data-uscb-header-search-typeahead-container").addClass( 'uscb-hide' );
+        $("#data-uscb-header-links-helpful").removeClass( 'uscb-hide' );
+
+        onSearchFocusBlur(false);
+    }
+
+    var onSearchButtonClick = function() {
+    	document.getElementById("data-uscb-header-search-form").submit();
+    }
+        
+    return {
+    	initSearchTypeahead: initSearchTypeahead,
+    	onSearchFocus: onSearchFocus,
+    	onSearchFocusBlur: onSearchFocusBlur,
+    	onSearchCloseClick: onSearchCloseClick,
+    	onSearchButtonClick: onSearchButtonClick
+    }
+
+})(); // DO NOT INJECT FRAMEWORKS OR DEPENDENCIES THAT RELY ON FRAMEWORKS.
+
+/*
+ * This code is coupled with the Census main header HTL.
+ *
+ * It is framework-less and should remain that way for the foreseeable future to aid other, non-AEM census pages to utilize it.
+ *
+ * As such, it does not inject any dependencies, UNLESS the dependency is also dependency-less like CensusSearchTypeahead.
+ *
+ */
+var CensusUniversalHeader = (function(CensusSearchTypeahead) {  // DO NOT INJECT FRAMEWORKS OR DEPENDENCIES THAT RELY ON FRAMEWORKS.
+
+    var activeTab;
+    var toggleOverlayIDs = [];
+
+      // Hide all togglable menus on scroll
+    document.addEventListener( "scroll", function(event) {
+        toggleOverlay( false );
+        togglePanel( false );
+    });
+
+    var initHeader = function() {
+        activeTab = document.querySelector( '.uscb-header-mainnav-tab-active' );
+    }
+
+    var toggleOverlay = function( show, idx ) {
+        const openAndCloseOverlay = () => {
+            var tabs = document.getElementsByClassName( 'uscb-header-mainnav-tab' );
+            for ( var i = 0; i < tabs.length; i++ ) {
+                if ( show ) {
+                    if ( i === idx ) {
+                          // Replace the space if captured by the regex
+                        tabs[i].className = tabs[i].className.replace( /( )?(uscb\-header\-mainnav\-tab\-inactive)/g, '$1uscb-header-mainnav-tab-active' );
+                    } else {
+                        tabs[i].className = tabs[i].className.replace( /( )?(uscb\-header\-mainnav\-tab\-active)/g, '$1uscb-header-mainnav-tab-inactive' );
+                    }
+                } else {
+                    tabs[i].className = tabs[i].className.replace( /( )?(uscb\-header\-mainnav\-tab\-active)/g, '$1uscb-header-mainnav-tab-inactive' );
+                }
+            }
+    
+            if ( !show && activeTab ) {
+                  // Reset the active tab
+                activeTab.className = activeTab.className.replace( 'uscb-header-mainnav-tab-inactive', 'uscb-header-mainnav-tab-active' );
+            }
+    
+            var overlayWrapper = document.getElementsByClassName( 'uscb-header-overlay-wrapper' );
+            if ( overlayWrapper.length === 1 ) {
+                var overlayItems = document.getElementsByClassName( 'uscb-header-overlay-item' );
+                for ( var i = 0; i < overlayItems.length; i++ ) {
+                    var item = overlayItems[ i ];
+                    if ( item.className.indexOf( 'uscb-header-overlay-item-' + idx ) !== -1 ) {
+                    	toggleVisibility( show, item );
+                    } else {
+                        toggleVisibility( !show, item );
+                    }
+                }
+    
+                var overlayBackdrop = document.getElementsByClassName( 'uscb-header-overlay-backdrop' );
+                if ( overlayBackdrop.length === 1 ) {
+                    toggleVisibility( show, overlayBackdrop[0] );
+                }
+    
+                toggleVisibility( show, overlayWrapper[0] );
+            }
+        }
+
+        toggleOverlayIDs.forEach((timerId) => {
+            clearTimeout(timerId);
+        });
+        toggleOverlayIDs = [];
+        let overlayWrapperEle = document.getElementsByClassName( 'uscb-header-overlay-wrapper' );
+        overlayWrapperEle = overlayWrapperEle && overlayWrapperEle[0];
+
+        if (overlayWrapperEle?.className.includes('uscb-hide') || !show) {
+            const OverlayTimerId = setTimeout(() => {
+                openAndCloseOverlay();
+            }, 300);
+            toggleOverlayIDs.push(OverlayTimerId);
+        } else {
+            openAndCloseOverlay();
+        }
+    }
+
+    var togglePanel = function( show ) {
+        var container = document.getElementsByClassName( 'uscb-header-panel-container' );
+        if ( container.length === 1 ) {
+            toggleVisibility( show, container[0] );
+        }
+
+        document.body.style.overflow = show ? 'hidden' : 'auto';
+    }
+
+    var navigatePanel = function( show, key ) {
+        var topClass = 'uscb-header-panel-top';
+        var contentClass = 'uscb-header-panel-content';
+
+        var panelTops = document.getElementsByClassName( topClass );
+        var panelContents = document.getElementsByClassName( contentClass );
+
+          // Number of tops should always match number of content containers
+        if ( panelTops.length !== panelContents.length ) {
+            console.log( "ERROR: Header panel misconfigured." );
+        }
+
+        for ( var i = 0; i < panelTops.length; i++ ) {
+            var top = panelTops[i];
+            var content = panelContents[i];
+
+            if ( top.className.indexOf( topClass + '-' + key ) !== -1 ) {
+                toggleVisibility( show, top );
+            } else {
+                toggleVisibility( !show, top );
+            }
+
+            if ( content.className.indexOf( contentClass + '-' + key ) !== -1 ) {
+                toggleVisibility( show, content );
+            } else {
+                toggleVisibility( !show, content );
+            }
+        }
+    }
+
+    function toggleVisibility( show, el ) {
+        if ( show ) {
+            el.className = el.className.replace( /( )?(uscb\-hide)/g, '' );
+        } else {
+            if ( el.className.indexOf( 'uscb-hide' ) === -1 ) {
+                el.className += ' uscb-hide';
+            }
+        }
+    }
+
+    function keypress( event, idx ) {
+          // Arrow down to open menu and move focus
+        if ( event.keyCode === 40 ) {
+            toggleOverlay( true, idx );
+
+            var overlayItem = document.getElementsByClassName( 'uscb-header-overlay-item-' + idx );
+            if (overlayItem.length > 0 ) {
+                var firstLink = overlayItem[0].querySelector( 'a' );
+                if ( firstLink ) {
+                    firstLink.focus();
+                }
+            }
+
+              // Stop the keypress from doing anything else on the page
+            event.preventDefault();
+            event.stopPropagation();
+        }
+    }
+
+      // Force a shift in tab order at the end of each overlay subnav list by refocusing the current tab and simulating a tab press
+    function tabToNextMainItem( event, idx, last ) {
+        if ( last && event && event.keyCode === 9 ) {
+            var tabs = document.getElementsByClassName( 'uscb-header-mainnav-tab' );
+            var currentTab = tabs[ idx ];
+            var currentTabLink = currentTab.querySelector( 'a' );
+            currentTabLink.focus();
+            document.body.dispatchEvent( new KeyboardEvent( 'keydown', { 'keyCode': 61 } ) );
+
+            toggleOverlay( false );
+        }
+    }
+
+    var closeDropdowns = function(idPrefix, navItemIdPrefix, navItemLinkIdPrefix, navItemLength, skipIndex) {
+        for (var i = 0; i < navItemLength; i++) {
+            if (skipIndex !== undefined && i === skipIndex) {
+                continue;
+            }
+            var other = document.getElementById(idPrefix + i);
+            if (other) {
+                other.style.display = "none";
+            }
+
+            var otherNavItemTarget = document.getElementById(navItemIdPrefix + i);
+            otherNavItemTarget.classList.remove("uscb-nav-item-hover");
+
+            var otherNavItemLinkTarget = document.getElementById(navItemLinkIdPrefix + i);
+            otherNavItemLinkTarget.classList.remove("uscb-nav-item-link-hover");
+        }
+
+        setMenuTabOrders(0);
+    }
+
+    var onActivateMenu = function(active, idPrefix, navItemIdPrefix, navItemLinkIdPrefix, index, navItemLength) {
+        if (active === true) {
+        	CensusSearchTypeahead.onSearchFocusBlur(false);
+
+            var target = document.getElementById(idPrefix + index);
+
+            // Show targetted dropdown
+            if (target && target.style.display === "none") {
+                target.style.display = "flex";
+
+                var navItemTarget = document.getElementById(navItemIdPrefix + index);
+                navItemTarget.className += " uscb-nav-item-hover";
+
+                var navItemLinkTarget = document.getElementById(navItemLinkIdPrefix + index);
+                navItemLinkTarget.className += " uscb-nav-item-link-hover";
+            }
+
+            // Close all other dropdowns
+            closeDropdowns(idPrefix, navItemIdPrefix, navItemLinkIdPrefix, navItemLength, index);
+        } else if (active === false) {
+            // Close ALL dropdowns
+            setTimeout( closeDropdowns, 300, idPrefix, navItemIdPrefix, navItemLinkIdPrefix, navItemLength );
+        } else if (active === "toggle") {
+            var target = document.getElementById(idPrefix + index);
+            if (target) {
+                if (target.style.display === "none") {
+                    window.headerOpenIndex = index;
+                    onActivateMenu(true, idPrefix, navItemIdPrefix, navItemLinkIdPrefix, index, navItemLength);
+                } else if (target.style.display === "flex") {
+                    closeDropdowns(idPrefix, navItemIdPrefix, navItemLinkIdPrefix, navItemLength);
+                    if (index !== window.headerOpenIndex) {
+                        window.headerOpenIndex = index;
+                        onActivateMenu(true, idPrefix, navItemIdPrefix, navItemLinkIdPrefix, index, navItemLength);
+                    }
+                }
+            }
+        }
+    }
+
+    var onHoverLeave = function(idPrefix, navItemIdPrefix, navItemLinkIdPrefix, index, navItemLength) {
+        setTimeout( closeDropdowns(idPrefix, navItemIdPrefix, navItemLinkIdPrefix, navItemLength), 300 );
+    }
+
+    var toggleMenu = function(idPrefix, navItemIdPrefix, navItemLinkIdPrefix, firstExpandedIndex, navItemLength) {
+        var header = document.getElementById("data-uscb-main-header");
+        var headerMenu = document.getElementById("data-uscb-header-menu");
+        var headerMenuButton = document.getElementsByClassName("uscb-menu-icon-container")[0];
+        var closeText = document.getElementById("data-uscb-header-close");
+        if (headerMenu.classList.contains("uscb-hide-md")) {
+            // Open
+            header.classList.add("uscb-header-fixed");
+            headerMenu.classList.remove("uscb-hide-md");
+            headerMenu.classList.add("uscb-show-md");
+            headerMenuButton.classList.add("uscb-menu-change");
+            headerMenuButton.style.width = "90px";
+            closeText.style.display = "block";
+
+            onActivateMenu(true, idPrefix, navItemIdPrefix, navItemLinkIdPrefix, firstExpandedIndex, navItemLength);
+        } else if (headerMenu.classList.contains("uscb-show-md")) {
+            // Close
+            header.classList.remove("uscb-header-fixed");
+            headerMenu.classList.remove("uscb-show-md");
+            headerMenu.classList.add("uscb-hide-md");
+            headerMenuButton.classList.remove("uscb-menu-change");
+            headerMenuButton.style.width = "auto";
+            closeText.style.display = "none";
+        }
+    }
+
+    var onKeyParent = function(event, idPrefix, index) {
+    	if (event.keyCode === 9 && !event.shiftKey) {
+            setMenuTabOrders(-1);
+        }
+    }
+
+		var onKeyChildLast = function(event, parentMenuId) {
+    	if (event.keyCode === 9 && !event.shiftKey) {
+            setMenuTabOrders(0);
+            if ( !isLastHeaderItem( parentMenuId ) ) {
+                var target = document.getElementById(parentMenuId);
+                if (target) {
+                    target.focus();
+                    event.stopPropagation();
+                }
+            }
+    	}
+    }
+
+    var onKeyChildFirst = function(event, parentMenuId) {
+    	if (event.keyCode === 9 && event.shiftKey) {
+            setMenuTabOrders(0);
+            var target = document.getElementById(parentMenuId);
+            if (target) {
+                target.focus();
+                event.stopPropagation();
+            }
+        }
+    }
+
+    function isLastHeaderItem( parentMenuId ) {
+        var parentMenuItem = document.querySelector( '.uscb-header-menu #' + parentMenuId );
+        var menuItems = document.querySelectorAll( '.uscb-header-menu a[id*="data-uscb-header-nav-item-"]' );
+        return parentMenuItem === menuItems[ menuItems.length - 1 ];
+    }
+
+    function setMenuTabOrders(order) {
+        var menuItems = document.querySelectorAll( '.uscb-header-menu a[id*="data-uscb-header-nav-item-"]' );
+        if ( menuItems ) {
+              // Old for loop type to support IE
+            for ( var i = 0; i < menuItems.length; i++ ) {
+                menuItems[i].setAttribute('tabindex', order);
+            }
+        }
+    }
+
+    return {
+        toggleOverlay       : toggleOverlay,
+        togglePanel         : togglePanel,
+        navigatePanel       : navigatePanel,
+        keypress            : keypress,
+        tabToNextMainItem   : tabToNextMainItem,
+        initHeader          : initHeader,
+    	onActivateMenu      : onActivateMenu,
+    	closeDropdowns      : closeDropdowns,
+    	onHoverLeave        : onHoverLeave,
+    	toggleMenu          : toggleMenu,
+    	onKeyParent         : onKeyParent,
+    	onKeyChildLast      : onKeyChildLast,
+        onKeyChildFirst     : onKeyChildFirst
+    }
+
+})(CensusSearchTypeahead); // DO NOT INJECT FRAMEWORKS OR DEPENDENCIES THAT RELY ON FRAMEWORKS.
+
+
+  // TODO: Genericize dropdown adn consolidate usages across components
+var $mobileNav = $('#data-uscb-input-wrapper-mobile-header-nav');
+
+$mobileNav.click(function(e) {
+    var $dropdown = $mobileNav.find('ul');
+    if ( $dropdown[0] ) {
+        if ( $dropdown[0].style.display === 'none' ) {
+            $dropdown[0].style.display = 'block';
+            $mobileNav.attr('aria-expanded', 'true');
+        } else {
+            $dropdown[0].style.display = 'none';
+            $mobileNav.attr('aria-expanded', 'false');
+        }
+    }
+});
+
+
+$(window).click(function(e){			
+    if ( $(e.target).closest( '#data-uscb-input-wrapper-mobile-header-nav' )[0] !== undefined ) {
+        //do nothing...
+    } else {
+        var $dropdown = $mobileNav.find('ul');
+        if ( $dropdown[0] ) {
+            if ( $dropdown[0].style.display === 'block' ) {
+                $dropdown[0].style.display = 'none';
+            }
+        }
+    }
+});
+

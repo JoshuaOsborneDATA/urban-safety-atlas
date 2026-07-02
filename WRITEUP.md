@@ -1,0 +1,160 @@
+# Urban Safety Atlas: County-Level Risk Index for 3,144 US Counties
+
+## Overview
+
+The Urban Safety Atlas constructs a composite safety index for every US county by merging four government data sources, quantifies how safety clusters geographically, validates the index against an external outcome never used in its construction, and exposes all results through an interactive Streamlit dashboard. The project covers the full data science pipeline: acquisition, imputation, feature engineering, clustering, statistical testing, and external validation.
+
+---
+
+## Data Sources
+
+| Source | Agency | Variable captured |
+|---|---|---|
+| CDC PLACES 2023 | CDC | Health outcomes (chronic disease, uninsured rate, poor health days) |
+| AQI Summary 2023 | EPA | Air quality (annual AQI, days unhealthy) |
+| FARS 2023 | NHTSA | Traffic fatalities per 100K residents |
+| SAIPE 2023 | US Census | Economic distress (poverty rate, median household income) |
+| County Health Rankings 2023 | Robert Wood Johnson Foundation | Life expectancy (validation only, not used in construction) |
+
+---
+
+## Feature Engineering
+
+Each data source contributes one sub-score on a 0 to 100 scale (higher = safer):
+
+- **Health score**: inverse-scaled from poor health outcomes and uninsured rate
+- **Air quality score**: inverse-scaled from median AQI and unhealthy air days; 2,170 counties (69%)
+  lack EPA monitors and received imputed values via Inverse Distance Weighting (IDW) from the
+  nearest monitored counties
+- **Economic score**: scaled from poverty rate and median household income
+- **Traffic score**: Bayesian-shrunk fatality rate, inverse-scaled. The raw county fatality rate is shrunk toward the national mean using empirical Bayes smoothing. This prevents zero-fatality counties from being scored as perfectly safe; a county with no recorded fatalities and few crashes has high uncertainty, not confirmed safety. The smoothed rate is then log-scaled and inverted to a 0 to 100 score.
+
+The composite **safety score** is a weighted average of the four sub-scores (default: equal weights). The Streamlit dashboard allows users to adjust weights interactively. A sidebar toggle also allows switching the traffic score to a plain log variant for sensitivity comparison.
+
+---
+
+## Imputation
+
+EPA air quality monitors are concentrated in urban areas. Rather than discarding rural counties, IDW imputation was applied: each unmonitored county's air quality estimate is a distance-weighted average of monitored counties within a search radius, with weight proportional to $\frac{1}{distance^2}$. This preserves all 3,144 counties in the final dataset.
+
+---
+
+## Clustering
+
+Two clustering methods were applied to the composite safety score:
+
+**KMeans (k=2, silhouette score 0.958)** identified two risk tiers: lower-safety and higher-safety counties. The optimal k was selected by maximizing the silhouette score across k = 2 to 10. Bayesian shrinkage on the traffic score compresses small-sample noise and produces a more bimodal feature space, which is why k=2 dominates so strongly (0.958 vs 0.325 at k=3).
+
+**HDBSCAN** provided a density-based alternative that does not require specifying k in advance. Counties that do not belong to any cluster are labelled as noise (cluster = -1), which often corresponds to genuinely atypical counties.
+
+Both methods are available in the dashboard with interactive parameter controls.
+
+---
+
+## Statistical Tests
+
+### Normality: Shapiro-Wilk
+
+Safety scores within each census region are non-normally distributed (all regions: p < 0.0001), justifying the use of non-parametric tests downstream.
+
+### Regional Disparities: Kruskal-Wallis
+
+The Kruskal-Wallis test confirms significant differences in safety score distributions across the four census regions (H = 777.3, p < 0.0001). Post-hoc medians:
+
+| Region | Median safety score |
+|---|---|
+| South | 59.0 |
+| Midwest | 63.7 |
+| Northeast | 65.3 |
+| West | 66.1 |
+
+### Spatial Autocorrelation: Global Moran's I
+
+Global Moran's I = 0.646 (p < 0.001, k = 8 nearest county centroids, row-standardized weights), indicating strong positive spatial autocorrelation. Safe counties cluster near other safe counties; unsafe counties cluster near other unsafe counties.
+
+LISA (Local Indicators of Spatial Association) quadrant breakdown:
+
+| Quadrant | Description | Count |
+|---|---|---|
+| HH | Safe county surrounded by safe neighbours | 1,309 |
+| LL | Unsafe county surrounded by unsafe neighbours | 1,266 |
+| HL | Safe county in an otherwise unsafe region | 267 |
+| LH | Unsafe county in an otherwise safe region | 302 |
+
+HH and LL counties represent geographic safety clusters. HL and LH counties are the most interesting: they deviate sharply from their spatial context and warrant closer
+examination.
+
+---
+
+## External Validation
+
+A well-constructed safety index should correlate with real-world outcomes it never observed. Life expectancy from County Health Rankings 2023 was withheld entirely from index construction and used only at this validation stage.
+
+**Main benchmark:**
+Spearman rho = 0.77, Pearson r = 0.74 (both p < 0.001) between safety score and life expectancy across 3,061 counties.
+
+Two counties (Aleutians East Borough, AK and Mono County, CA) were excluded: their CHR-reported life expectancy exceeded 100 years, a biologically implausible county average arising from very small populations and wide confidence intervals (one CI spans 68 to 157 years).
+
+**Secondary benchmarks** (directional check: higher safety should predict lower mortality):
+
+| Outcome | Spearman rho | Result |
+|---|---|---|
+| Premature mortality | -0.70 | Pass |
+| Child mortality | -0.61 | Pass |
+| Drug overdose deaths | -0.22 | Pass |
+
+All four external outcomes pass the directional test.
+
+**Sub-score contributions to life expectancy:**
+
+| Sub-score | Spearman rho with life expectancy |
+|---|---|
+| Health | +0.75 |
+| Economic | +0.73 |
+| Traffic | +0.38 |
+| Air quality | +0.16 |
+
+Health and economic sub-scores carry the most predictive power. Air quality is the weakest, partly because 69% of counties received IDW-imputed rather than directly measured values. The traffic sub-score correlation listed above reflects the Bayesian-shrunk variant; substituting the plain log variant reduces the composite Spearman rho to 0.73, confirming that shrinkage removes small-sample noise rather than genuine signal.
+
+A sensitivity check on weights found that reducing the AQI weight to 5% and holding the remaining three sub-scores at 25% each pushes the composite Spearman rho above 0.80. Removing AQI entirely reaches approximately 0.797. The equal-weight default is retained in the dashboard, but this result reinforces the data quality caveat: IDW imputation for 69% of counties flattens spatial variation in the AQI sub-score, and a lower weight better reflects its effective information content relative to the directly measured sub-scores.
+
+Breaking the correlation down across all external outcomes reveals two additional findings. First, traffic has an unusually strong correlation with child mortality relative to its correlation with life expectancy and premature mortality. This reflects the fact that unintentional injury is the leading cause of death for children in the US, making the traffic fatality rate a near-direct input into child mortality rather than a proxy. Second, the economic sub-score outperforms the health sub-score for child mortality. The health sub-score is constructed from CDC PLACES adult chronic disease indicators (smoking, obesity, depression, poor mental health days), which have little bearing on why children die. Child mortality is driven primarily by poverty-related conditions: inadequate prenatal care, food insecurity, lack of pediatric access, and housing instability. These are captured by poverty rate and median household income. This pattern exposes a limitation of the health sub-score: it is effectively an adult health behavior index rather than a general population health measure.
+
+---
+
+## Dashboard
+
+The Streamlit dashboard (`app.py`) exposes all results interactively:
+
+- **Map tab**: choropleth of safety scores by county, filterable by census region
+- **EDA tab**: score distributions, regional box plots, sub-score histograms
+- **Clusters tab**: KMeans and HDBSCAN cluster maps with interactive parameter sliders (k for KMeans; min_cluster_size and min_samples for HDBSCAN)
+- **County Profile tab**: lookup any county for its full score breakdown
+- **Spatial tab**: Moran scatter plot with LISA quadrant coloring, HH/LL/HL/LH county tables
+- **Validation tab**: scatter plot of safety score vs life expectancy, sub-score correlation bar chart, secondary benchmark table
+
+A sidebar provides preset weight schemes (Equal, Health-Heavy, Traffic-Heavy, Economic-Heavy) and a custom slider mode that normalizes weights automatically. The sidebar also includes a traffic score method toggle: Bayesian Shrinkage (default, k=10) or Log, allowing sensitivity comparison without changing the primary results.
+
+---
+
+## Reproducibility
+
+Scripts in `scripts/` can be run sequentially to reproduce all results from the raw data files.
+
+Notebooks in `notebooks/` mirror the scripts with some outputs and commentary.
+
+**Key dependencies:** Python 3, Pandas, NumPy, SciPy, Scikit-learn, Streamlit, Plotly
+
+---
+
+## Key Results at a Glance
+
+| Finding | Value |
+|---|---|
+| Counties in index | 3,144 |
+| Counties lacking EPA monitors (IDW-imputed) | 2,170 (69%) |
+| KMeans silhouette score (k=2) | 0.958 |
+| Global Moran's I | 0.646 (p < 0.001) |
+| Spearman rho vs life expectancy | 0.77 (p < 0.001) |
+| Regional disparity (Kruskal-Wallis) | H = 777.3 (p < 0.001) |
+| South vs Northeast median safety score | 59.0 vs 65.3 |

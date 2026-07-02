@@ -1,0 +1,15 @@
+function hideDocumentNumberLabels(){
+  document.querySelectorAll('.uscb-document-number-text > b').forEach(function(el) {
+      const normalized = el.textContent.trim().toLowerCase();
+
+      if (/^document\s+number\s*:*/.test(normalized)){
+    	el.style.display = 'none';
+	}
+  });
+}
+
+//Run Once on Initial Load
+hideDocumentNumberLabels();
+
+const observer = new MutationObserver(hideDocumentNumberLabels);
+observer.observe(document.body, {childList: true, subtree: true});

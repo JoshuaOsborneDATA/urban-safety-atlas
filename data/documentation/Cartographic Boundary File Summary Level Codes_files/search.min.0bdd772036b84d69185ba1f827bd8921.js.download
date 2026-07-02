@@ -1,0 +1,58 @@
+var CensusSearchResults = ( function() {
+	function getCEDSCIResults( type, query ) {
+		  // Both table and map results run off the same endpoint
+		SearchDataService.subscribe( 'tables', query ).then( response => {
+			populateTab( type, query, response.tables );
+		});
+	}
+
+	function populateTab( type, query, results ) {
+		  // Table and map results are using the same HTML so all classes contain 'tables'
+		var $container = $( '.uscb-search__' + 'tables' + '-results' );
+
+		var resultSet = '<div class="uscb-search__tables-results">';
+		results.forEach( result => {
+			resultSet += buildResultSet( type, query, result );
+		});
+		resultSet += '</div>';
+		
+		  // Create contextual fragment so that scripts in resulting HTML are executed properly
+		var htmlFragment = document.createRange().createContextualFragment( resultSet );
+		// htmlFragment = appendMoreLink( htmlFragment );
+		$container[0].replaceWith( htmlFragment );
+
+		  // Refind container after DOM replacement to get updated element
+		$container = $( '.uscb-search__' + 'tables' + '-results' );
+		
+		  // Hide loading indicators
+		$container.closest( '.uscb-search-result__tables' ).find( '.uscb-loading-circular-indeterminate' ).addClass( 'uscb-hide' );
+	}
+
+	function buildResultSet( type, query, table ) {
+		  // Get the root from the search brain, but since this is building a link to a page, not the API, some of it must be replaced.
+		  	// Links are expecting singulars for the type, so remove the last 's' for the current use cases of Tables and Maps
+			// The syntax of the links is also a little different between the types, so that's determined here as well.
+		var tableID = type == 'tables' ? table.instances[0].id : ( type == 'maps' ? table.instances[0].id + '/' + table.instances[0].id.replace( '.', '/' ) : '' );
+		var link = SearchDataService.getRoot().replace( 'api/', '' ) + type.slice( 0, -1 ) + '/' + tableID + '?q=' + query;
+		var years = [ ... new Set( table.instances.map( instance => { return instance.vintage } ).sort().reverse() ) ].join( ', ' );
+
+		return `<a class="uscb-search-result__tables-result" href="${ link }">
+					<div class="uscb-search-result__tables-title">${ table.instances[0].description }</div>
+					<div class="uscb-search-result__tables-metadata">
+						<div class="uscb-search-result__tables-metadata-program"><b>Survey/Program:</b> ${ table.program }</div>
+						<div class="uscb-search-result__tables-metadata-years"><b>Years:</b> ${ years }</div>
+						<div class="uscb-search-result__tables-metadata-ID"><b>Table:</b> ${ table.table }</div>
+					</div>
+					<div class="uscb-search-result__tables-link">${ link }</div>
+			        <hr class="uscb-search-result__tables-hr" />
+				</a>`;
+	}
+
+	function appendMoreLink( fragment ) {
+		return document.createRange().createContextualFragment( fragment.toString() + `<a href="https://data.census.gov/tables?q=education&size=36&from=36">Want to see more results?</a>` );
+	}
+
+	return {
+		getCEDSCIResults: getCEDSCIResults
+	};
+})();

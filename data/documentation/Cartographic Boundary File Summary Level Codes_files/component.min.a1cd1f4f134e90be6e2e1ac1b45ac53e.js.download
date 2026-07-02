@@ -1,0 +1,1 @@
+function adjustResponsiveIFrame(a,b){if(a=$("#"+a)){var c=a.parent().width();a.width(c);a.attr("src",b)}};

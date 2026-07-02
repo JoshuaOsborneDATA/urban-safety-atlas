@@ -1,0 +1,14 @@
+@media ( min-width : 960px) {
+	.uscb-main-responsivegrid {
+		min-height: calc(100vh - 438px);
+	}
+	
+	.uscb-2020-main-responsivegrid {
+		min-height: calc(100vh - 595px);
+	}
+}
+
+.container-fluid {
+	min-height: calc(100vh - 438px);
+}
+

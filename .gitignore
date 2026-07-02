@@ -1,0 +1,20 @@
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# Obsidian
+.obsidian/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Data (raw inputs are large; keep processed outputs)
+data/raw/
+
+# OS
+.DS_Store
+Thumbs.db
