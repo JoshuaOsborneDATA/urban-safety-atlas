@@ -14,6 +14,7 @@ venv/
 
 # Data (raw inputs are large; keep processed outputs)
 data/raw/
+data/rawtl_*
 
 # Generated figures (Streamlit regenerates these dynamically)
 figs/
