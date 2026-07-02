@@ -15,6 +15,9 @@ venv/
 # Data (raw inputs are large; keep processed outputs)
 data/raw/
 
+# Generated figures (Streamlit regenerates these dynamically)
+figs/
+
 # OS
 .DS_Store
 Thumbs.db
