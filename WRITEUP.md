@@ -23,11 +23,9 @@ The Urban Safety Atlas constructs a composite safety index for every US county b
 Each data source contributes one sub-score on a 0 to 100 scale (higher = safer):
 
 - **Health score**: inverse-scaled from poor health outcomes and uninsured rate
-- **Air quality score**: inverse-scaled from median AQI and unhealthy air days; 2,170 counties (69%)
-  lack EPA monitors and received imputed values via Inverse Distance Weighting (IDW) from the
-  nearest monitored counties
+- **Air quality score**: inverse-scaled from median AQI and unhealthy air days; 2,170 counties (69%) lack EPA monitors and received imputed values via Inverse Distance Weighting (IDW) from the nearest monitored counties
 - **Economic score**: scaled from poverty rate and median household income
-- **Traffic score**: Bayesian-shrunk fatality rate, inverse-scaled. The raw county fatality rate is shrunk toward the national mean using empirical Bayes smoothing. This prevents zero-fatality counties from being scored as perfectly safe; a county with no recorded fatalities and few crashes has high uncertainty, not confirmed safety. The smoothed rate is then log-scaled and inverted to a 0 to 100 score.
+- **Traffic score**: Bayesian-shrunk fatality rate, log-compressed, inverse-scaled. The raw county fatality rate is first shrunk toward the national mean using empirical Bayes smoothing. This prevents zero-fatality counties from being scored as perfectly safe. The shrunk rate is then log1p-transformed before MinMaxScaling to prevent extreme low-population outliers (e.g. Loving County, TX: population 57, rate 5,263 per 100k) from collapsing the entire scale onto a single point.
 
 The composite **safety score** is a weighted average of the four sub-scores (default: equal weights). The Streamlit dashboard allows users to adjust weights interactively. A sidebar toggle also allows switching the traffic score to a plain log variant for sensitivity comparison.
 
@@ -43,7 +41,7 @@ EPA air quality monitors are concentrated in urban areas. Rather than discarding
 
 Two clustering methods were applied to the composite safety score:
 
-**KMeans (k=2, silhouette score 0.958)** identified two risk tiers: lower-safety and higher-safety counties. The optimal k was selected by maximizing the silhouette score across k = 2 to 10. Bayesian shrinkage on the traffic score compresses small-sample noise and produces a more bimodal feature space, which is why k=2 dominates so strongly (0.958 vs 0.325 at k=3).
+**KMeans (k=2, silhouette score 0.283)** identified two risk tiers of roughly equal size (1,558 and 1,586 counties). The silhouette score was maximized across k = 2 to 10; k=3 scores marginally higher (0.287) but produces an unbalanced 378/1,382/1,384 split, so k=2 was retained for interpretability. Note: an earlier version of the pipeline (Bayesian shrinkage without log compression) produced an artificially high silhouette of 0.958 at k=2, caused by Loving County, TX (population 57, fatality rate 5,263 per 100k) being isolated as its own cluster. Adding log1p compression after shrinkage resolves this and produces a balanced, meaningful split.
 
 **HDBSCAN** provided a density-based alternative that does not require specifying k in advance. Counties that do not belong to any cluster are labelled as noise (cluster = -1), which often corresponds to genuinely atypical counties.
 
@@ -59,27 +57,27 @@ Safety scores within each census region are non-normally distributed (all region
 
 ### Regional Disparities: Kruskal-Wallis
 
-The Kruskal-Wallis test confirms significant differences in safety score distributions across the four census regions (H = 777.3, p < 0.0001). Post-hoc medians:
+The Kruskal-Wallis test confirms significant differences in safety score distributions across the four census regions (H = 805.7, p < 0.0001). Post-hoc medians:
 
 | Region | Median safety score |
 |---|---|
-| South | 59.0 |
-| Midwest | 63.7 |
-| Northeast | 65.3 |
-| West | 66.1 |
+| South | 53.4 |
+| Midwest | 58.8 |
+| West | 60.8 |
+| Northeast | 61.1 |
 
 ### Spatial Autocorrelation: Global Moran's I
 
-Global Moran's I = 0.646 (p < 0.001, k = 8 nearest county centroids, row-standardized weights), indicating strong positive spatial autocorrelation. Safe counties cluster near other safe counties; unsafe counties cluster near other unsafe counties.
+Global Moran's I = 0.627 (p < 0.001, k = 8 nearest county centroids, row-standardized weights), indicating strong positive spatial autocorrelation. Safe counties cluster near other safe counties; unsafe counties cluster near other unsafe counties.
 
 LISA (Local Indicators of Spatial Association) quadrant breakdown:
 
 | Quadrant | Description | Count |
 |---|---|---|
-| HH | Safe county surrounded by safe neighbours | 1,309 |
-| LL | Unsafe county surrounded by unsafe neighbours | 1,266 |
-| HL | Safe county in an otherwise unsafe region | 267 |
-| LH | Unsafe county in an otherwise safe region | 302 |
+| HH | Safe county surrounded by safe neighbours | 1,288 |
+| LL | Unsafe county surrounded by unsafe neighbours | 1,264 |
+| HL | Safe county in an otherwise unsafe region | 281 |
+| LH | Unsafe county in an otherwise safe region | 311 |
 
 HH and LL counties represent geographic safety clusters. HL and LH counties are the most interesting: they deviate sharply from their spatial context and warrant closer
 examination.
@@ -153,8 +151,8 @@ Notebooks in `notebooks/` mirror the scripts with some outputs and commentary.
 |---|---|
 | Counties in index | 3,144 |
 | Counties lacking EPA monitors (IDW-imputed) | 2,170 (69%) |
-| KMeans silhouette score (k=2) | 0.958 |
-| Global Moran's I | 0.646 (p < 0.001) |
+| KMeans silhouette score (k=2) | 0.283 |
+| Global Moran's I | 0.627 (p < 0.001) |
 | Spearman rho vs life expectancy | 0.77 (p < 0.001) |
-| Regional disparity (Kruskal-Wallis) | H = 777.3 (p < 0.001) |
-| South vs Northeast median safety score | 59.0 vs 65.3 |
+| Regional disparity (Kruskal-Wallis) | H = 805.7 (p < 0.001) |
+| South vs Northeast median safety score | 53.4 vs 61.1 |

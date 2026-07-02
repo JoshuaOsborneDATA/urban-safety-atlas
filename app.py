@@ -60,6 +60,83 @@ def load_life_expectancy() -> pd.DataFrame:
 # ── Clustering (cached per params so sliders don't re-run unnecessarily) ─────
 
 @st.cache_data
+def compute_validation_data(weights: tuple, traffic_method: str, bayes_k: int) -> dict:
+    from scipy.stats import spearmanr, pearsonr
+
+    df = load_data().copy()
+    if traffic_method == "Bayesian Shrinkage":
+        df["traffic_score"] = compute_traffic_score_bayes(bayes_k).values
+    df["safety_score"] = sum(w * df[col] for w, col in zip(weights, SCORE_COLS))
+
+    le_df = load_life_expectancy()
+    merged = df.merge(le_df, on="fips", how="inner").dropna(subset=["safety_score", "life_expectancy"])
+
+    rho, p_rho = spearmanr(merged["safety_score"], merged["life_expectancy"])
+    r, p_r = pearsonr(merged["safety_score"], merged["life_expectancy"])
+
+    sub_corrs = []
+    for col, lbl in zip(SCORE_COLS, SCORE_LABELS):
+        sub = merged[[col, "life_expectancy"]].dropna()
+        rho_s, _ = spearmanr(sub[col], sub["life_expectancy"])
+        sub_corrs.append({"Sub-score": lbl, "Spearman ρ": rho_s, "n": len(sub)})
+
+    outcome_cols = {
+        "premature_mortality": "Premature Mortality",
+        "drug_overdose_deaths": "Drug Overdose Deaths",
+        "child_mortality": "Child Mortality",
+    }
+    available_outcomes = {
+        col: lbl for col, lbl in outcome_cols.items()
+        if col in merged.columns and merged[col].dropna().shape[0] >= 100
+    }
+
+    bench_rows = []
+    for col, lbl in available_outcomes.items():
+        sub = merged[["safety_score", col]].dropna()
+        rho_b, p_b = spearmanr(sub["safety_score"], sub[col])
+        bench_rows.append({
+            "Outcome": lbl,
+            "Spearman ρ": round(rho_b, 4),
+            "p-value": "< 0.001" if p_b < 0.001 else f"{p_b:.3e}",
+            "n": len(sub),
+            "Expected direction": "(−) higher safety → lower mortality",
+        })
+
+    all_outcomes = {"Life Expectancy": "life_expectancy"} | {lbl: col for col, lbl in available_outcomes.items()}
+    heatmap_data = {}
+    for out_lbl, out_col in all_outcomes.items():
+        col_rhos = []
+        for score_col in SCORE_COLS:
+            sub = merged[[score_col, out_col]].dropna()
+            rho_s, _ = spearmanr(sub[score_col], sub[out_col])
+            col_rhos.append(round(rho_s, 3))
+        heatmap_data[out_lbl] = col_rhos
+
+    return {
+        "merged": merged,
+        "rho": rho, "p_rho": p_rho,
+        "r": r, "p_r": p_r,
+        "sub_corrs": sub_corrs,
+        "bench_rows": bench_rows,
+        "heatmap_data": heatmap_data,
+        "available_outcomes": available_outcomes,
+    }
+
+
+@st.cache_data
+def compute_morans_cached(weights: tuple, traffic_method: str, bayes_k: int, knn_k: int = 8):
+    df = load_data().copy()
+    if traffic_method == "Bayesian Shrinkage":
+        df["traffic_score"] = compute_traffic_score_bayes(bayes_k).values
+    df["safety_score"] = sum(w * df[col] for w, col in zip(weights, SCORE_COLS))
+    valid_idx, neighbor_indices = get_knn_indices(k=knn_k)
+    safety_vals = df.loc[valid_idx, "safety_score"].values
+    morans_I, EI, spatial_lag = compute_morans_i(safety_vals, neighbor_indices)
+    names = df.loc[valid_idx, "name"].values
+    return morans_I, EI, spatial_lag, safety_vals, valid_idx, names
+
+
+@st.cache_data
 def load_tsne() -> np.ndarray:
     return np.load(TSNE_PATH)
 
@@ -72,7 +149,7 @@ def compute_traffic_score_bayes(k: int) -> pd.Series:
     weight = df["total_crashes"] / (df["total_crashes"] + k)
     shrunk_rate = weight * df["traffic_fatality_rate"] + (1 - weight) * global_rate
     score = 100 - MinMaxScaler(feature_range=(0, 100)).fit_transform(
-        shrunk_rate.values.reshape(-1, 1)
+        np.log1p(shrunk_rate.values).reshape(-1, 1)
     ).flatten()
     return pd.Series(score, index=df.index)
 
@@ -500,16 +577,12 @@ with tab_spatial:
         "The spatial weights use the **8 nearest county centroids** (row-standardised)."
     )
 
-    # Compute spatial weights (cached on lat/lon only)
-    valid_idx, neighbor_indices = get_knn_indices(k=8)
-
-    # Align safety_score to the valid (non-NaN lat/lon) rows
-    safety_vals = df_full.loc[valid_idx, "safety_score"].values
-    morans_I, EI, spatial_lag = compute_morans_i(safety_vals, neighbor_indices)
+    morans_I, EI, spatial_lag, safety_vals, valid_idx, _names = compute_morans_cached(
+        tuple(weights), traffic_method, bayes_k if traffic_method == "Bayesian Shrinkage" else 10
+    )
 
     # Z-score (simplified analytical approximation)
     n = len(safety_vals)
-    k_nn = neighbor_indices.shape[1]
     z_approx = (morans_I - EI) / (1.0 / np.sqrt(n))  # rough std dev
 
     # Interpretation
@@ -549,7 +622,7 @@ with tab_spatial:
         "safety_std": x_std,
         "spatial_lag_std": lag_std,
         "quadrant": quadrant,
-        "name": df_full.loc[valid_idx, "name"].values,
+        "name": _names,
         "safety_score": safety_vals,
     })
 
@@ -631,18 +704,15 @@ with tab_valid:
         "a strong positive Spearman correlation confirms the index tracks true county-level risk."
     )
 
-    le_df = load_life_expectancy()
-    merged = df_full.merge(le_df, on="fips", how="inner")
-    merged = merged.dropna(subset=["safety_score", "life_expectancy"])
+    _bayes_k_val = bayes_k if traffic_method == "Bayesian Shrinkage" else 10
+    vdata = compute_validation_data(tuple(weights), traffic_method, _bayes_k_val)
+    merged = vdata["merged"]
+    rho, p_rho = vdata["rho"], vdata["p_rho"]
+    r = vdata["r"]
 
     if len(merged) == 0:
         st.warning("Could not merge safety scores with life expectancy data.")
     else:
-        from scipy.stats import spearmanr, pearsonr
-
-        rho, p_rho = spearmanr(merged["safety_score"], merged["life_expectancy"])
-        r, p_r = pearsonr(merged["safety_score"], merged["life_expectancy"])
-
         m1, m2, m3, m4 = st.columns(4)
         m1.metric("Counties matched", f"{len(merged):,}")
         m2.metric("Spearman ρ", f"{rho:.4f}", help="Rank-based; robust to outliers")
@@ -688,13 +758,7 @@ with tab_valid:
         st.subheader("Sub-score Correlations with Life Expectancy")
         st.markdown("Which dimension drives the most of the predictive power?")
 
-        sub_corrs = []
-        for col, lbl in zip(SCORE_COLS, SCORE_LABELS):
-            sub = merged[[col, "life_expectancy"]].dropna()
-            rho_s, _ = spearmanr(sub[col], sub["life_expectancy"])
-            sub_corrs.append({"Sub-score": lbl, "Spearman ρ": rho_s, "n": len(sub)})
-        sub_corr_df = pd.DataFrame(sub_corrs).sort_values("Spearman ρ", ascending=True)
-
+        sub_corr_df = pd.DataFrame(vdata["sub_corrs"]).sort_values("Spearman ρ", ascending=True)
         fig_bar = px.bar(
             sub_corr_df,
             x="Spearman ρ",
@@ -716,49 +780,15 @@ with tab_valid:
 
         # Additional outcomes
         with st.expander("Additional external benchmarks"):
-            outcome_cols = {
-                "premature_mortality": "Premature Mortality",
-                "drug_overdose_deaths": "Drug Overdose Deaths",
-                "child_mortality": "Child Mortality",
-            }
-            available_outcomes = {
-                col: lbl for col, lbl in outcome_cols.items()
-                if col in merged.columns and merged[col].dropna().shape[0] >= 100
-            }
-
-            if available_outcomes:
-                # Composite safety score vs each outcome
+            if vdata["available_outcomes"]:
                 st.markdown("**Composite safety score vs external outcomes**")
-                bench_rows = []
-                for col, lbl in available_outcomes.items():
-                    sub = merged[["safety_score", col]].dropna()
-                    rho_b, p_b = spearmanr(sub["safety_score"], sub[col])
-                    bench_rows.append({
-                        "Outcome": lbl,
-                        "Spearman ρ": round(rho_b, 4),
-                        "p-value": "< 0.001" if p_b < 0.001 else f"{p_b:.3e}",
-                        "n": len(sub),
-                        "Expected direction": "(−) higher safety → lower mortality",
-                    })
-                st.dataframe(pd.DataFrame(bench_rows), use_container_width=True)
+                st.dataframe(pd.DataFrame(vdata["bench_rows"]), use_container_width=True)
                 st.caption("Negative correlations are correct direction: higher safety score → lower mortality/disease burden.")
 
                 st.divider()
 
-                # Sub-score x outcome heatmap
                 st.markdown("**Sub-score correlations with each external outcome**")
-                all_outcomes = {"Life Expectancy": "life_expectancy"} | {lbl: col for col, lbl in available_outcomes.items()}
-                heatmap_data = {}
-                for out_lbl, out_col in all_outcomes.items():
-                    col_rhos = []
-                    for score_col in SCORE_COLS:
-                        sub = merged[[score_col, out_col]].dropna()
-                        rho_s, _ = spearmanr(sub[score_col], sub[out_col])
-                        col_rhos.append(round(rho_s, 3))
-                    heatmap_data[out_lbl] = col_rhos
-
-                heatmap_df = pd.DataFrame(heatmap_data, index=SCORE_LABELS)
-
+                heatmap_df = pd.DataFrame(vdata["heatmap_data"], index=SCORE_LABELS)
                 fig_heat = go.Figure(go.Heatmap(
                     z=heatmap_df.values,
                     x=heatmap_df.columns.tolist(),

@@ -25,7 +25,7 @@ _k = 10
 _global_rate = df['total_fatalities'].sum() / df['population'].sum() * 100_000
 _weight = df['total_crashes'] / (df['total_crashes'] + _k)
 _shrunk_rate = _weight * df['traffic_fatality_rate'] + (1 - _weight) * _global_rate
-df['traffic_score'] = 100 - scaler.fit_transform(_shrunk_rate.values.reshape(-1, 1)).flatten()
+df['traffic_score'] = 100 - scaler.fit_transform(np.log1p(_shrunk_rate.values).reshape(-1, 1)).flatten()
 
 df['air_quality_score'] = scaler.fit_transform(-df['Median AQI'].to_numpy().reshape(-1, 1)).flatten()
 
