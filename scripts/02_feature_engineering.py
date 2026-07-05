@@ -66,11 +66,35 @@ if len(missing) > 0:
 for col in ['health_score', 'traffic_score', 'air_quality_score', 'economic_score']:
     df[col] = df[col].fillna(df[col].median())
 
+# ── Crime sub-score (CHR 2023: Homicides + Firearm Fatalities per 100k) ──────
+chr_df = pd.read_csv(f"{raw_data_path}chr_2023.csv", low_memory=False, dtype=str)
+chr_df = chr_df[chr_df['5-digit FIPS Code'] != 'fipscode'].copy()
+chr_df = chr_df[~chr_df['5-digit FIPS Code'].str.endswith('000')].copy()
+chr_df = chr_df[chr_df['5-digit FIPS Code'].str.len() == 5].copy()
+chr_df['fips'] = chr_df['5-digit FIPS Code'].str.zfill(5)
+chr_df['homicide_rate'] = pd.to_numeric(chr_df['Homicides raw value'], errors='coerce')
+chr_df['firearm_rate'] = pd.to_numeric(chr_df['Firearm Fatalities raw value'], errors='coerce')
+
+df = df.merge(chr_df[['fips', 'homicide_rate', 'firearm_rate']], on='fips', how='left')
+
+# Impute missing with state median, then national median fallback.
+# Homicide rate has ~42% coverage; firearm has ~72%.
+for col in ['homicide_rate', 'firearm_rate']:
+    state_med = df.groupby('state_abbr')[col].transform('median')
+    national_med = df[col].median()
+    df[col] = df[col].fillna(state_med).fillna(national_med)
+
+homicide_scaled = 100 - scaler.fit_transform(df['homicide_rate'].values.reshape(-1, 1)).flatten()
+firearm_scaled = 100 - scaler.fit_transform(df['firearm_rate'].values.reshape(-1, 1)).flatten()
+df['crime_score'] = 0.6 * homicide_scaled + 0.4 * firearm_scaled
+print(f"Crime score: mean={df['crime_score'].mean():.1f}, std={df['crime_score'].std():.1f}")
+
 WEIGHTS = {
-    'health_score':      0.25,
-    'air_quality_score': 0.25,
-    'economic_score':    0.25,
-    'traffic_score':     0.25,
+    'health_score':      0.20,
+    'air_quality_score': 0.20,
+    'economic_score':    0.20,
+    'traffic_score':     0.20,
+    'crime_score':       0.20,
 }
 df['safety_score'] = sum(w * df[col] for col, w in WEIGHTS.items())
 

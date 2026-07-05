@@ -16,14 +16,15 @@ DATA_PATH = os.path.join(BASE_DIR, "data/processed/final_data.csv")
 LE_PATH = os.path.join(BASE_DIR, "data/processed/life_expectancy.csv")
 TSNE_PATH = os.path.join(BASE_DIR, "data/processed/tsne_coords.npy")
 
-SCORE_COLS = ["health_score", "air_quality_score", "economic_score", "traffic_score"]
-SCORE_LABELS = ["Health", "Air Quality", "Economic", "Traffic"]
+SCORE_COLS = ["health_score", "air_quality_score", "economic_score", "traffic_score", "crime_score"]
+SCORE_LABELS = ["Health", "Air Quality", "Economic", "Traffic", "Crime"]
 
 WEIGHT_PRESETS = {
-    "Equal (Recommended)": [0.25, 0.25, 0.25, 0.25],
-    "Health-Heavy":        [0.40, 0.20, 0.20, 0.20],
-    "Traffic-Heavy":       [0.20, 0.20, 0.20, 0.40],
-    "Economic-Heavy":      [0.20, 0.20, 0.40, 0.20],
+    "Equal (Recommended)": [0.20, 0.20, 0.20, 0.20, 0.20],
+    "Health-Heavy":        [0.40, 0.15, 0.15, 0.15, 0.15],
+    "Traffic-Heavy":       [0.15, 0.15, 0.15, 0.40, 0.15],
+    "Economic-Heavy":      [0.15, 0.15, 0.40, 0.15, 0.15],
+    "Crime-Heavy":         [0.15, 0.15, 0.15, 0.15, 0.40],
     "Custom":              None,
 }
 
@@ -203,7 +204,7 @@ st.set_page_config(
 )
 
 st.title("Urban Safety Atlas")
-st.caption("County-level US safety index · EPA air quality · CDC PLACES health · NHTSA FARS traffic · Census SAIPE poverty")
+st.caption("County-level US safety index · EPA air quality · CDC PLACES health · NHTSA FARS traffic · Census SAIPE poverty · CHR 2023 crime")
 
 # ── Sidebar ───────────────────────────────────────────────────────────────────
 
@@ -223,11 +224,12 @@ with st.sidebar:
 
     if preset_name == "Custom":
         st.markdown("**Drag to set weights** (auto-normalised to sum to 1)")
-        w_health = st.slider("Health",       0.0, 1.0, 0.25, 0.05)
-        w_air    = st.slider("Air Quality",  0.0, 1.0, 0.25, 0.05)
-        w_econ   = st.slider("Economic",     0.0, 1.0, 0.25, 0.05)
-        w_traf   = st.slider("Traffic",      0.0, 1.0, 0.25, 0.05)
-        raw_weights = [w_health, w_air, w_econ, w_traf]
+        w_health = st.slider("Health",       0.0, 1.0, 0.20, 0.05)
+        w_air    = st.slider("Air Quality",  0.0, 1.0, 0.20, 0.05)
+        w_econ   = st.slider("Economic",     0.0, 1.0, 0.20, 0.05)
+        w_traf   = st.slider("Traffic",      0.0, 1.0, 0.20, 0.05)
+        w_crime  = st.slider("Crime",        0.0, 1.0, 0.20, 0.05)
+        raw_weights = [w_health, w_air, w_econ, w_traf, w_crime]
         total_w = sum(raw_weights) or 1.0
         if abs(total_w - 1.0) > 0.01:
             st.caption(f"Weights sum to {total_w:.2f}; normalising.")
@@ -348,6 +350,7 @@ with tab_map:
                 "air_quality_score": ":.1f",
                 "traffic_score": ":.1f",
                 "economic_score": ":.1f",
+                "crime_score": ":.1f",
                 "fips": False,
             },
             title="County Safety Score (weighted composite)",
@@ -522,12 +525,13 @@ with tab_profile:
         county_data = df[df["name"] == selected_county].iloc[0]
         national_median = df_full[SCORE_COLS + ["safety_score"]].median()
 
-        c1, c2, c3, c4, c5 = st.columns(5)
+        c1, c2, c3, c4, c5, c6 = st.columns(6)
         c1.metric("Safety Score", f"{county_data['safety_score']:.1f}")
         c2.metric("Health", f"{county_data['health_score']:.1f}")
         c3.metric("Air Quality", f"{county_data['air_quality_score']:.1f}")
         c4.metric("Traffic", f"{county_data['traffic_score']:.1f}")
         c5.metric("Economic", f"{county_data['economic_score']:.1f}")
+        c6.metric("Crime", f"{county_data['crime_score']:.1f}")
 
         county_vals = [county_data[col] for col in SCORE_COLS]
         median_vals = [national_median[col] for col in SCORE_COLS]
@@ -563,6 +567,8 @@ with tab_profile:
             st.write(f"Mental Health (MHLTH): **{county_data['MHLTH']:.1f}%**")
             tfr = county_data.get("traffic_fatality_rate", float("nan"))
             st.write(f"Traffic Fatality Rate: **{tfr:.1f} per 100k**")
+            st.write(f"Homicide Rate: **{county_data.get('homicide_rate', float('nan')):.1f} per 100k**")
+            st.write(f"Firearm Fatality Rate: **{county_data.get('firearm_rate', float('nan')):.1f} per 100k**")
             st.write(f"Cluster: **{county_data['cluster_label']}**")
 
 # ══════════════════════════════════════════════════════════════════════════════

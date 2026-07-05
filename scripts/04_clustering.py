@@ -16,10 +16,10 @@ os.makedirs(model_dir, exist_ok=True)
 df = pd.read_csv(f"{processed_data_path}features.csv")
 tsne_coords = np.load(f"{processed_data_path}tsne_coords.npy")
 
-four_cats = ["health_score", "air_quality_score", "economic_score", "traffic_score"]
+score_cols = ["health_score", "air_quality_score", "economic_score", "traffic_score", "crime_score"]
 
 standard_scale = StandardScaler()
-X_scaled = standard_scale.fit_transform(df[four_cats])
+X_scaled = standard_scale.fit_transform(df[score_cols])
 
 random_state = 42
 inertias, silhouettes = [], []
@@ -29,6 +29,10 @@ for k in k_range:
     labels = km.fit_predict(X_scaled)
     inertias.append(km.inertia_)
     silhouettes.append(silhouette_score(X_scaled, labels))
+
+def add_watermark(fig):
+    fig.text(0.99, 0.01, '© Joshua Osborne', ha='right', va='bottom',
+             fontsize=7, color='gray', alpha=0.6, transform=fig.transFigure)
 
 fig, axes = plt.subplots(1, 2, figsize=(14, 5))
 axes[0].plot(list(k_range), inertias, marker='o', markersize=3)
@@ -40,6 +44,7 @@ axes[1].set_title('Silhouette Score vs k')
 axes[1].set_xlabel('k')
 axes[1].set_ylabel('Silhouette Score')
 plt.tight_layout()
+add_watermark(fig)
 plt.savefig(f'{fig_dir}elbow_silhouette.png', dpi=120)
 plt.close()
 
@@ -70,6 +75,7 @@ axes[1].set_xlabel('t-SNE 1')
 axes[1].set_ylabel('t-SNE 2')
 plt.colorbar(scatter2, ax=axes[1])
 plt.tight_layout()
+add_watermark(fig)
 plt.savefig(f'{fig_dir}cluster_comparison.png', dpi=120)
 plt.close()
 
